@@ -34,7 +34,7 @@ export default async function Dashboard() {
           </p>
           <div className="flex gap-3 justify-center">
             <button className="btn-primary">👶 Kind Toevoegen</button>
-            <button className="btn-ghost">📝 Nieuwe Klus</button>
+            <a href="/chores" className="btn-ghost">📝 Klussen Beheren</a>
           </div>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default async function Dashboard() {
           <h2 className="text-xl font-semibold">Snelle Acties</h2>
           <div className="space-y-3">
             <button className="btn-primary w-full">👶 Kind Toevoegen</button>
-            <button className="btn-ghost w-full">📝 Nieuwe Klus</button>
+            <a href="/chores" className="btn-ghost w-full">📝 Klussen Beheren</a>
             <button className="btn-ghost w-full">💰 Beloning Maken</button>
           </div>
         </div>

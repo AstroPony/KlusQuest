@@ -15,17 +15,17 @@
   - [x] Basic profile editing ✅ **User info display in dashboard**
 
 ### **Week 2: Chore Management CRUD**
-- [ ] **Chore Operations**
-  - [ ] Create new chore form
-  - [ ] Edit existing chores
-  - [ ] Delete chores
-  - [ ] Chore assignment to kids
-  - [ ] Frequency scheduling (daily/weekly/one-off)
+- [x] **Chore Operations**
+  - [x] Create new chore form ✅ **Complete**
+  - [x] Edit existing chores ✅ **Complete**
+  - [x] Delete chores ✅ **Complete**
+  - [x] Chore assignment to kids ✅ **Complete**
+  - [x] Frequency scheduling (daily/weekly/one-off) ✅ **Complete**
 
-- [ ] **Chore Data Model**
-  - [ ] Connect frontend to Prisma database
-  - [ ] Real-time chore updates
-  - [ ] Chore completion tracking
+- [x] **Chore Data Model**
+  - [x] Connect frontend to Prisma database ✅ **Complete**
+  - [x] Real-time chore updates ✅ **Complete**
+  - [x] Chore completion tracking ✅ **Complete**
 
 ### **Week 3: Kid Dashboard Integration**
 - [ ] **Real Data Connection**

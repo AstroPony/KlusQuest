@@ -9,18 +9,34 @@ type Chore = {
   baseXp: number;
   baseCoins: number;
   completed: boolean;
+  kid?: {
+    id: string;
+    displayName: string;
+    avatar?: string;
+  };
+  completions: Array<{
+    id: string;
+    createdAt: Date;
+    kidId: string;
+  }>;
 };
 
 type Props = {
   chores: Chore[];
-  onComplete: (choreId: string) => void;
+  onComplete: (choreId: string, kidId: string) => void;
+  onEdit?: (chore: Chore) => void;
+  onDelete?: (choreId: string) => void;
+  showActions?: boolean;
 };
 
-export default function ChoreList({ chores, onComplete }: Props) {
+export default function ChoreList({ chores, onComplete, onEdit, onDelete, showActions }: Props) {
   const todayChores = chores.filter(chore => 
     chore.frequency === "DAILY" || 
     (chore.frequency === "WEEKLY" && new Date().getDay() === 1) // Monday
-  );
+  ).map(chore => ({
+    ...chore,
+    completed: chore.completions.length > 0
+  }));
 
   if (todayChores.length === 0) {
     return (
@@ -53,19 +69,44 @@ export default function ChoreList({ chores, onComplete }: Props) {
                 <span className="text-primary">⭐ {chore.baseXp} XP</span>
                 <span className="text-warn">💰 {chore.baseCoins} munten</span>
                 <span className="text-accent">📅 {chore.frequency}</span>
+                {chore.kid && (
+                  <span className="text-info">👤 {chore.kid.displayName}</span>
+                )}
               </div>
             </div>
             
-            {!chore.completed ? (
-              <button
-                onClick={() => onComplete(chore.id)}
-                className="btn-primary px-4 py-2"
-              >
-                Klaar!
-              </button>
-            ) : (
-              <div className="text-primary font-semibold">✅ Voltooid</div>
-            )}
+            <div className="flex items-center gap-2">
+              {!chore.completed ? (
+                <button
+                  onClick={() => onComplete(chore.id, chore.kid?.id || "")}
+                  className="btn-primary px-4 py-2"
+                  disabled={!chore.kid}
+                >
+                  Klaar!
+                </button>
+              ) : (
+                <div className="text-primary font-semibold">✅ Voltooid</div>
+              )}
+              
+              {showActions && onEdit && onDelete && (
+                <>
+                  <button
+                    onClick={() => onEdit(chore)}
+                    className="btn-secondary px-3 py-2"
+                    title="Bewerken"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => onDelete(chore.id)}
+                    className="btn-error px-3 py-2"
+                    title="Verwijderen"
+                  >
+                    🗑️
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       ))}
