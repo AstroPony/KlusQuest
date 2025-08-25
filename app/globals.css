@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --bg: #0b0f14;
-  --card: #121821;
+  --bg: #0f172a;
+  --card: #1e293b;
   --primary: #22c55e;
   --primary-contrast: #052e16;
-  --accent: #60a5fa;
+  --accent: #3b82f6;
   --warn: #f59e0b;
   --danger: #ef4444;
-  --text: #e5e7eb;
+  --text: #e2e8f0;
   --muted: #94a3b8;
 }
 
@@ -22,54 +22,54 @@ html, body, #__next {
 
 @layer components {
   .card {
-    @apply rounded-2xl bg-[color:var(--card)] border border-white/10 p-4;
+    @apply rounded-2xl bg-slate-800 border border-white/10 p-4;
   }
   .btn {
     @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium;
   }
   .btn-primary {
-    @apply btn bg-[color:var(--primary)] text-black hover:opacity-90;
+    @apply btn bg-green-500 text-black hover:opacity-90;
   }
   .btn-secondary {
-    @apply btn bg-[color:var(--accent)] text-white hover:opacity-90;
+    @apply btn bg-blue-500 text-white hover:opacity-90;
   }
   .btn-ghost {
     @apply btn bg-transparent border border-white/10 hover:bg-white/5;
   }
   .btn-error {
-    @apply btn bg-[color:var(--danger)] text-white hover:opacity-90;
+    @apply btn bg-red-500 text-white hover:opacity-90;
   }
   .btn-sm {
     @apply px-3 py-1.5 text-sm;
   }
   .input {
-    @apply rounded-xl bg-[color:var(--card)] border border-white/10 px-4 py-2 text-white placeholder:text-muted focus:border-[color:var(--primary)] focus:outline-none;
+    @apply rounded-xl bg-slate-800 border border-white/10 px-4 py-2 text-white placeholder:text-slate-400 focus:border-green-500 focus:outline-none;
   }
   .input-error {
-    @apply border-[color:var(--danger)];
+    @apply border-red-500;
   }
   .alert {
     @apply rounded-xl p-4 border;
   }
   .alert-error {
-    @apply bg-[color:var(--danger)]/10 border-[color:var(--danger)]/30 text-[color:var(--danger)];
+    @apply bg-red-500/10 border-red-500/30 text-red-500;
   }
   .text-primary {
-    @apply text-[color:var(--primary)];
+    @apply text-green-500;
   }
   .text-accent {
-    @apply text-[color:var(--accent)];
+    @apply text-blue-500;
   }
   .text-warn {
-    @apply text-[color:var(--warn)];
+    @apply text-yellow-500;
   }
   .text-error {
-    @apply text-[color:var(--danger)];
+    @apply text-red-500;
   }
   .text-info {
-    @apply text-[color:var(--accent)];
+    @apply text-blue-500;
   }
   .text-muted {
-    @apply text-[color:var(--muted)];
+    @apply text-slate-400;
   }
 } 
