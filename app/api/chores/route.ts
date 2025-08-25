@@ -15,8 +15,30 @@ export async function GET(request: NextRequest) {
       include: { household: true }
     });
 
+    console.log("User found:", user?.id, "Household:", user?.household?.id);
+
     if (!user?.household) {
-      return NextResponse.json({ error: "No household found" }, { status: 404 });
+      // Create a default household for the user if none exists
+      const household = await prisma.household.create({
+        data: {
+          name: "Mijn Gezin",
+          locale: "nl",
+          ownerId: userId
+        }
+      });
+      
+      console.log("Created default household:", household.id);
+      
+      // Update user to have this household
+      await prisma.user.update({
+        where: { id: userId },
+        data: { householdId: household.id }
+      });
+      
+      console.log("Updated user with household");
+      
+      // Update the user object for this request
+      user.household = household;
     }
 
     // Get all chores for the household
@@ -89,8 +111,30 @@ export async function POST(request: NextRequest) {
       include: { household: true }
     });
 
+    console.log("POST - User found:", user?.id, "Household:", user?.household?.id);
+
     if (!user?.household) {
-      return NextResponse.json({ error: "No household found" }, { status: 404 });
+      // Create a default household for the user if none exists
+      const household = await prisma.household.create({
+        data: {
+          name: "Mijn Gezin",
+          locale: "nl",
+          ownerId: userId
+        }
+      });
+      
+      console.log("POST - Created default household:", household.id);
+      
+      // Update user to have this household
+      await prisma.user.update({
+        where: { id: userId },
+        data: { householdId: household.id }
+      });
+      
+      console.log("POST - Updated user with household");
+      
+      // Update the user object for this request
+      user.household = household;
     }
 
     // Create the chore
