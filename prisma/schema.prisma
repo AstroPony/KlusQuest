@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// SQLite doesn't support enums, so we'll use strings with constraints
+// Role: "PARENT" | "KID"
+// Frequency: "DAILY" | "WEEKLY" | "ONE_OFF"
+// RewardType: "MONEY" | "TIME" | "ITEM"
+// ClaimStatus: "PENDING" | "APPROVED" | "DENIED"
+
+model User {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  email     String    @unique
+  role      String    @default("PARENT")
+
+  household Household?
+}
+
+model Household {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  ownerId   String    @unique
+  owner     User      @relation(fields: [ownerId], references: [id])
+
+  name      String    @default("Mijn gezin")
+  locale    String    @default("nl")
+
+  kids      Kid[]
+  rewards   Reward[]
+  chores    Chore[]
+}
+
+model Kid {
+  id          String        @id @default(cuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  householdId String
+  household   Household     @relation(fields: [householdId], references: [id])
+
+  displayName String
+  avatar      String?
+  pinHash     String?
+
+  level       Int           @default(1)
+  xp          Int           @default(0)
+  coins       Int           @default(0)
+
+  chores      Chore[]
+  completions Completion[]
+  claims      Claim[]
+  ledger      Transaction[]
+}
+
+model Chore {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  householdId String
+  household   Household  @relation(fields: [householdId], references: [id])
+
+  kidId       String?
+  kid         Kid?       @relation(fields: [kidId], references: [id])
+
+  title       String
+  description String?
+  frequency   String
+
+  nextDueAt   DateTime?
+  active      Boolean    @default(true)
+
+  baseXp      Int        @default(10)
+  baseCoins   Int        @default(1)
+
+  completions Completion[]
+}
+
+model Completion {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+
+  choreId      String
+  chore        Chore    @relation(fields: [choreId], references: [id])
+
+  kidId        String
+  kid          Kid      @relation(fields: [kidId], references: [id])
+
+  approved     Boolean  @default(true)
+  xpEarned     Int      @default(10)
+  coinsEarned  Int      @default(1)
+}
+
+model Reward {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  householdId String
+  household   Household   @relation(fields: [householdId], references: [id])
+
+  title       String
+  type        String      @default("ITEM")
+  costCoins   Int
+  active      Boolean     @default(true)
+
+  claims      Claim[]
+}
+
+model Claim {
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  resolvedAt  DateTime?
+
+  rewardId    String
+  reward      Reward      @relation(fields: [rewardId], references: [id])
+
+  kidId       String
+  kid         Kid         @relation(fields: [kidId], references: [id])
+
+  status      String      @default("PENDING")
+  coinsSpent  Int         @default(0)
+}
+
+model Transaction {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+
+  kidId      String
+  kid        Kid      @relation(fields: [kidId], references: [id])
+
+  amount     Int
+  reason     String
+} 
