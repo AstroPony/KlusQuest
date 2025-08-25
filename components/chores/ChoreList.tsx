@@ -35,7 +35,7 @@ export default function ChoreList({ chores, onComplete, onEdit, onDelete, showAc
     (chore.frequency === "WEEKLY" && new Date().getDay() === 1) // Monday
   ).map(chore => ({
     ...chore,
-    completed: chore.completions.length > 0
+    completed: (chore.completions?.length || 0) > 0
   }));
 
   if (todayChores.length === 0) {

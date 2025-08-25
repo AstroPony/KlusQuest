@@ -30,7 +30,46 @@ html, body, #__next {
   .btn-primary {
     @apply btn bg-[color:var(--primary)] text-black hover:opacity-90;
   }
+  .btn-secondary {
+    @apply btn bg-[color:var(--accent)] text-white hover:opacity-90;
+  }
   .btn-ghost {
     @apply btn bg-transparent border border-white/10 hover:bg-white/5;
+  }
+  .btn-error {
+    @apply btn bg-[color:var(--danger)] text-white hover:opacity-90;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm;
+  }
+  .input {
+    @apply rounded-xl bg-[color:var(--card)] border border-white/10 px-4 py-2 text-white placeholder:text-muted focus:border-[color:var(--primary)] focus:outline-none;
+  }
+  .input-error {
+    @apply border-[color:var(--danger)];
+  }
+  .alert {
+    @apply rounded-xl p-4 border;
+  }
+  .alert-error {
+    @apply bg-[color:var(--danger)]/10 border-[color:var(--danger)]/30 text-[color:var(--danger)];
+  }
+  .text-primary {
+    @apply text-[color:var(--primary)];
+  }
+  .text-accent {
+    @apply text-[color:var(--accent)];
+  }
+  .text-warn {
+    @apply text-[color:var(--warn)];
+  }
+  .text-error {
+    @apply text-[color:var(--danger)];
+  }
+  .text-info {
+    @apply text-[color:var(--accent)];
+  }
+  .text-muted {
+    @apply text-[color:var(--muted)];
   }
 } 

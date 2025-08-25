@@ -175,7 +175,12 @@ export default function ChoresPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Klussen Beheren</h1>
+        <div className="flex items-center gap-4">
+          <a href="/dashboard" className="btn-ghost">
+            ← Terug naar Dashboard
+          </a>
+          <h1 className="text-3xl font-bold">Klussen Beheren</h1>
+        </div>
         <button
           onClick={() => setShowForm(true)}
           className="btn-primary"

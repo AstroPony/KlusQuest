@@ -32,19 +32,31 @@ export async function GET(request: NextRequest) {
             displayName: true,
             avatar: true
           }
-        },
-        completions: {
-          where: {
-            createdAt: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)) // Today
-            }
-          }
         }
       },
       orderBy: { createdAt: "desc" }
     });
 
-    return NextResponse.json(chores);
+    // Add completions for today to each chore
+    const choresWithCompletions = await Promise.all(
+      chores.map(async (chore: any) => {
+        const todayCompletions = await prisma.completion.findMany({
+          where: {
+            choreId: chore.id,
+            createdAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)) // Today
+            }
+          }
+        });
+        
+        return {
+          ...chore,
+          completions: todayCompletions
+        };
+      })
+    );
+
+    return NextResponse.json(choresWithCompletions);
   } catch (error) {
     console.error("Error fetching chores:", error);
     return NextResponse.json(

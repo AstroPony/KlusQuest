@@ -10,6 +10,11 @@ type Chore = {
   baseXp: number;
   baseCoins: number;
   completed: boolean;
+  completions: Array<{
+    id: string;
+    createdAt: Date;
+    kidId: string;
+  }>;
 };
 
 type KidStats = {
@@ -28,6 +33,7 @@ export default function KidSimplePage() {
       baseXp: 15,
       baseCoins: 2,
       completed: false,
+      completions: [],
     },
     {
       id: "2", 
@@ -37,6 +43,7 @@ export default function KidSimplePage() {
       baseXp: 20,
       baseCoins: 3,
       completed: false,
+      completions: [],
     },
     {
       id: "3",
@@ -46,6 +53,7 @@ export default function KidSimplePage() {
       baseXp: 25,
       baseCoins: 4,
       completed: false,
+      completions: [],
     },
   ]);
 
@@ -55,7 +63,7 @@ export default function KidSimplePage() {
     coins: 10,
   });
 
-  const handleCompleteChore = (choreId: string) => {
+  const handleCompleteChore = (choreId: string, kidId: string) => {
     const chore = chores.find(c => c.id === choreId);
     if (!chore || chore.completed) return;
 
@@ -90,6 +98,11 @@ export default function KidSimplePage() {
     <main className="p-6 max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <header className="text-center space-y-2">
+        <div className="flex justify-center mb-4">
+          <a href="/dashboard" className="btn-ghost">
+            ← Terug naar Dashboard
+          </a>
+        </div>
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
           Mijn Klussen
         </h1>
