@@ -1,21 +1,23 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { prisma } from '../lib/db/prisma'
 
 async function main() {
   console.log('🌱 Starting seed...')
+
+  // Create a sample user first
+  const user = await prisma.user.create({
+    data: {
+      clerkId: 'demo-user-123',
+      email: 'demo@klusquest.nl',
+      role: 'PARENT'
+    }
+  })
 
   // Create a sample household
   const household = await prisma.household.create({
     data: {
       name: 'Demo Gezin',
       locale: 'nl',
-      owner: {
-        create: {
-          email: 'demo@klusquest.nl',
-          role: 'PARENT'
-        }
-      }
+      ownerId: user.id
     }
   })
 

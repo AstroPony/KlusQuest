@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -44,40 +41,48 @@ export async function GET(
       user.household = household;
     }
 
-    // Get chores assigned to this kid
-    const chores = await prisma.chore.findMany({
-      where: { 
-        householdId: user.household.id,
-        kidId: params.id,
-        active: true 
+    // Get chore completions for the household
+    const completions = await prisma.completion.findMany({
+      where: {
+        chore: {
+          householdId: user.household.id
+        }
+      },
+      include: {
+        chore: {
+          select: {
+            id: true,
+            title: true
+          }
+        },
+        kid: {
+          select: {
+            id: true,
+            displayName: true,
+            avatar: true
+          }
+        }
       },
       orderBy: { createdAt: "desc" }
     });
 
-    // Add completion status for today to each chore
-    const choresWithCompletions = await Promise.all(
-      chores.map(async (chore: any) => {
-        const todayCompletions = await prisma.completion.findMany({
-          where: {
-            choreId: chore.id,
-            kidId: params.id,
-            createdAt: {
-              gte: new Date(new Date().setHours(0, 0, 0, 0)) // Today
-            }
-          }
-        });
-        
-        return {
-          ...chore,
-          completed: todayCompletions.length > 0,
-          completions: todayCompletions
-        };
-      })
-    );
+    // Transform the data to match the frontend interface
+    const transformedCompletions = completions.map(completion => ({
+      id: completion.id,
+      choreId: completion.choreId,
+      choreTitle: completion.chore.title,
+      kidId: completion.kidId,
+      kidName: completion.kid.displayName,
+      kidAvatar: completion.kid.avatar,
+      xpEarned: completion.xpEarned,
+      coinsEarned: completion.coinsEarned,
+      createdAt: completion.createdAt.toISOString(),
+      approved: completion.approved
+    }));
 
-    return NextResponse.json(choresWithCompletions);
+    return NextResponse.json(transformedCompletions);
   } catch (error) {
-    console.error("Error fetching kid chores:", error);
+    console.error("Error fetching completions:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

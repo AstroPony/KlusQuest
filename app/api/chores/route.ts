@@ -9,13 +9,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's household
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    // Get or create user
+    let user = await prisma.user.findUnique({
+      where: { clerkId: userId },
       include: { household: true }
     });
 
-    console.log("User found:", user?.id, "Household:", user?.household?.id);
+    console.log("User found:", user?.id, "Clerk ID:", userId, "Household:", user?.household?.id);
+
+    if (!user) {
+      // Create user if they don't exist
+      user = await prisma.user.create({
+        data: {
+          clerkId: userId,
+          email: "user@example.com", // We'll get this from Clerk later
+          role: "PARENT"
+        },
+        include: { household: true }
+      });
+      console.log("Created new user:", user.id);
+    }
 
     if (!user?.household) {
       // Create a default household for the user if none exists
@@ -23,19 +36,13 @@ export async function GET(request: NextRequest) {
         data: {
           name: "Mijn Gezin",
           locale: "nl",
-          ownerId: userId
+          ownerId: user.id
         }
       });
       
       console.log("Created default household:", household.id);
       
-      // Update user to have this household
-      await prisma.user.update({
-        where: { id: userId },
-        data: { householdId: household.id }
-      });
-      
-      console.log("Updated user with household");
+      console.log("Created default household:", household.id);
       
       // Update the user object for this request
       user.household = household;
@@ -105,13 +112,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user's household
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    // Get or create user
+    let user = await prisma.user.findUnique({
+      where: { clerkId: userId },
       include: { household: true }
     });
 
-    console.log("POST - User found:", user?.id, "Household:", user?.household?.id);
+    console.log("POST - User found:", user?.id, "Clerk ID:", userId, "Household:", user?.household?.id);
+
+    if (!user) {
+      // Create user if they don't exist
+      user = await prisma.user.create({
+        data: {
+          clerkId: userId,
+          email: "user@example.com", // We'll get this from Clerk later
+          role: "PARENT"
+        },
+        include: { household: true }
+      });
+      console.log("POST - Created new user:", user.id);
+    }
 
     if (!user?.household) {
       // Create a default household for the user if none exists
@@ -119,22 +139,40 @@ export async function POST(request: NextRequest) {
         data: {
           name: "Mijn Gezin",
           locale: "nl",
-          ownerId: userId
+          ownerId: user.id
         }
       });
       
       console.log("POST - Created default household:", household.id);
       
-      // Update user to have this household
-      await prisma.user.update({
-        where: { id: userId },
-        data: { householdId: household.id }
-      });
-      
-      console.log("POST - Updated user with household");
-      
       // Update the user object for this request
       user.household = household;
+    }
+
+    // Ensure we have the household ID for chore creation
+    const householdId = user.household?.id;
+    if (!householdId) {
+      return NextResponse.json(
+        { error: "Failed to create or retrieve household" },
+        { status: 500 }
+      );
+    }
+
+    // Validate kidId if provided
+    if (kidId) {
+      const kid = await prisma.kid.findFirst({
+        where: {
+          id: kidId,
+          householdId: householdId
+        }
+      });
+      
+      if (!kid) {
+        return NextResponse.json(
+          { error: "Kid not found or doesn't belong to your household" },
+          { status: 400 }
+        );
+      }
     }
 
     // Create the chore
@@ -146,7 +184,7 @@ export async function POST(request: NextRequest) {
         kidId: kidId || null,
         baseXp: baseXp || 10,
         baseCoins: baseCoins || 1,
-        householdId: user.household.id,
+        householdId: householdId,
         nextDueAt: new Date()
       },
       include: {

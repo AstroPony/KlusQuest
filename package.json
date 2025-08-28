@@ -10,7 +10,12 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "db:seed": "tsx prisma/seed.ts || true"
+    "db:seed": "tsx prisma/seed.ts || true",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.31.4",
@@ -21,7 +26,11 @@
     "react-dom": "^18",
     "zod": "^3.22.0"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -15,14 +15,36 @@ export async function PUT(
     const body = await request.json();
     const { title, description, frequency, kidId, baseXp, baseCoins, active } = body;
 
-    // Get user's household to verify ownership
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    // Get or create user
+    let user = await prisma.user.findUnique({
+      where: { clerkId: userId },
       include: { household: true }
     });
 
+    if (!user) {
+      // Create user if they don't exist
+      user = await prisma.user.create({
+        data: {
+          clerkId: userId,
+          email: "user@example.com", // We'll get this from Clerk later
+          role: "PARENT"
+        },
+        include: { household: true }
+      });
+    }
+
     if (!user?.household) {
-      return NextResponse.json({ error: "No household found" }, { status: 404 });
+      // Create a default household for the user if none exists
+      const household = await prisma.household.create({
+        data: {
+          name: "Mijn Gezin",
+          locale: "nl",
+          ownerId: user.id
+        }
+      });
+      
+      // Update the user object for this request
+      user.household = household;
     }
 
     // Update the chore
@@ -71,14 +93,36 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's household to verify ownership
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    // Get or create user
+    let user = await prisma.user.findUnique({
+      where: { clerkId: userId },
       include: { household: true }
     });
 
+    if (!user) {
+      // Create user if they don't exist
+      user = await prisma.user.create({
+        data: {
+          clerkId: userId,
+          email: "user@example.com", // We'll get this from Clerk later
+          role: "PARENT"
+        },
+        include: { household: true }
+      });
+    }
+
     if (!user?.household) {
-      return NextResponse.json({ error: "No household found" }, { status: 404 });
+      // Create a default household for the user if none exists
+      const household = await prisma.household.create({
+        data: {
+          name: "Mijn Gezin",
+          locale: "nl",
+          ownerId: user.id
+        }
+      });
+      
+      // Update the user object for this request
+      user.household = household;
     }
 
     // Soft delete by setting active to false
