@@ -1,49 +1,49 @@
-# 🧪 **Local Testing Guide - Week 1 Features**
+﻿# ðŸ§ª **Local Testing Guide - Week 1 Features**
 
-## 🚀 **Quick Start Testing**
+## ðŸš€ **Quick Start Testing**
 
 ### **1. Start the Development Server**
 ```bash
-npm run dev
+pnpm dev
 ```
 Your app will be available at: **http://localhost:3000**
 
 ---
 
-## 🎯 **What You Can Test Right Now (Without Clerk Keys)**
+## ðŸŽ¯ **What You Can Test Right Now (Without Clerk Keys)**
 
-### **✅ Working Features (No Setup Required)**
+### **âœ… Working Features (No Setup Required)**
 
 #### **1. Basic UI & Navigation**
 - **Home Page**: http://localhost:3000
-  - ✅ Beautiful landing page with hero section
-  - ✅ Features showcase (gamified experience, rewards, bilingual)
-  - ✅ Navigation buttons (will show auth state when Clerk is set up)
+  - âœ… Beautiful landing page with hero section
+  - âœ… Features showcase (gamified experience, rewards, bilingual)
+  - âœ… Navigation buttons (will show auth state when Clerk is set up)
 
 #### **2. Simple Kid View (No Auth Required)**
 - **URL**: http://localhost:3000/kid-simple
-  - ✅ Interactive chore list with 3 sample chores
-  - ✅ Click "Klaar!" buttons to complete chores
-  - ✅ Watch XP, coins, and level increase in real-time
-  - ✅ Celebration alerts when chores are completed
-  - ✅ Responsive design that works on mobile
+  - âœ… Interactive chore list with 3 sample chores
+  - âœ… Click "Klaar!" buttons to complete chores
+  - âœ… Watch XP, coins, and level increase in real-time
+  - âœ… Celebration alerts when chores are completed
+  - âœ… Responsive design that works on mobile
 
 #### **3. PixiJS Game Demo**
 - **URL**: http://localhost:3000/kid
-  - ✅ Interactive 6x6 grid of colored tiles
-  - ✅ Click tiles to see animations and earn points
-  - ✅ Score, level, and moves tracking
-  - ✅ Responsive canvas that adjusts to screen size
+  - âœ… Interactive 6x6 grid of colored tiles
+  - âœ… Click tiles to see animations and earn points
+  - âœ… Score, level, and moves tracking
+  - âœ… Responsive canvas that adjusts to screen size
 
 #### **4. Database & API**
 - **URL**: http://localhost:3000/api/test
-  - ✅ Returns sample household data
-  - ✅ Shows database connection is working
-  - ✅ Displays seeded data (Demo Gezin, Demo Kid, sample chore)
+  - âœ… Returns sample household data
+  - âœ… Shows database connection is working
+  - âœ… Displays seeded data (Demo Gezin, Demo Kid, sample chore)
 
 ---
 
-## 🔐 **Testing Authentication Features (Requires Clerk Setup)**
+## ðŸ” **Testing Authentication Features (Requires Clerk Setup)**
 
 ### **Prerequisites**
 1. **Set up Clerk account** (follow `CLERK-SETUP.md`)
@@ -66,11 +66,11 @@ Your app will be available at: **http://localhost:3000**
 #### **3. Protected Dashboard**
 1. **URL**: http://localhost:3000/dashboard
 2. **Features to test**:
-   - ✅ User info display (name, email)
-   - ✅ Welcome message for new users
-   - ✅ Quick action buttons
-   - ✅ Household overview stats
-   - ✅ Sign out functionality
+   - âœ… User info display (name, email)
+   - âœ… Welcome message for new users
+   - âœ… Quick action buttons
+   - âœ… Household overview stats
+   - âœ… Sign out functionality
 
 #### **4. Authentication State Changes**
 1. **Signed Out**: See "Inloggen" and "Account Aanmaken" buttons
@@ -79,7 +79,7 @@ Your app will be available at: **http://localhost:3000**
 
 ---
 
-## 🧪 **Step-by-Step Testing Scenarios**
+## ðŸ§ª **Step-by-Step Testing Scenarios**
 
 ### **Scenario 1: New User Journey (Parent)**
 1. **Start**: http://localhost:3000
@@ -111,7 +111,7 @@ Your app will be available at: **http://localhost:3000**
 
 ---
 
-## 🔧 **Testing Without Clerk (Mock Mode)**
+## ðŸ”§ **Testing Without Clerk (Mock Mode)**
 
 If you want to test the UI without setting up Clerk, you can temporarily modify the auth check:
 
@@ -132,7 +132,7 @@ You can test the onboarding flow directly:
 
 ---
 
-## 📱 **Mobile Testing**
+## ðŸ“± **Mobile Testing**
 
 ### **Responsive Design Testing**
 1. **Open DevTools** (F12)
@@ -149,12 +149,12 @@ You can test the onboarding flow directly:
 
 ---
 
-## 🐛 **Common Issues & Solutions**
+## ðŸ› **Common Issues & Solutions**
 
 ### **Build Errors**
 ```bash
 # If you get Clerk-related build errors:
-npm run build
+pnpm build
 
 # Solution: Set up Clerk keys or use mock mode
 ```
@@ -168,14 +168,14 @@ npm run build
 ### **Database Issues**
 ```bash
 # If API test fails:
-npx prisma generate
-npx prisma migrate dev --name init
-npx tsx prisma/seed.ts
+pnpm prisma:generate
+pnpm prisma:migrate --name init
+pnpm exec tsx prisma/seed.ts
 ```
 
 ---
 
-## 📊 **Testing Checklist**
+## ðŸ“Š **Testing Checklist**
 
 ### **Week 1 Features - Test Status**
 - [ ] **Home Page**: Landing page loads correctly
@@ -190,7 +190,7 @@ npx tsx prisma/seed.ts
 
 ---
 
-## 🎯 **What to Test Next (Week 2 Preview)**
+## ðŸŽ¯ **What to Test Next (Week 2 Preview)**
 
 Once Week 1 is working, you'll be able to test:
 - **Real household creation** (connected to database)
@@ -200,22 +200,22 @@ Once Week 1 is working, you'll be able to test:
 
 ---
 
-## 🚀 **Quick Commands**
+## ðŸš€ **Quick Commands**
 
 ```bash
 # Start development server
-npm run dev
+pnpm dev
 
 # Build for production
-npm run build
+pnpm build
 
 # Type check
-npm run typecheck
+pnpm typecheck
 
 # Database operations
-npx prisma generate
-npx prisma migrate dev
-npx tsx prisma/seed.ts
+pnpm prisma:generate
+pnpm prisma:migrate
+pnpm exec tsx prisma/seed.ts
 
 # Test API endpoint
 curl http://localhost:3000/api/test
@@ -223,7 +223,7 @@ curl http://localhost:3000/api/test
 
 ---
 
-## 💡 **Pro Tips**
+## ðŸ’¡ **Pro Tips**
 
 1. **Use Browser DevTools** to inspect network requests
 2. **Check Console** for any JavaScript errors
@@ -233,6 +233,7 @@ curl http://localhost:3000/api/test
 
 ---
 
-**Happy Testing! 🎉** 
+**Happy Testing! ðŸŽ‰** 
 
 Once you have Clerk set up, you'll have a fully functional authentication and onboarding system to test! 
+

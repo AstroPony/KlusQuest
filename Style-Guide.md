@@ -1,8 +1,8 @@
-Brand Vibe
+﻿Brand Vibe
 
-Playful but modern — think Duolingo × Habitica.
+Playful but modern â€” think Duolingo Ã— Habitica.
 
-Age range: 7–16 (avoid childish visuals; feel cool for teens).
+Age range: 7â€“16 (avoid childish visuals; feel cool for teens).
 
 Tone: Encouraging, short, positive. Emoji welcome, not overused.
 
@@ -12,7 +12,7 @@ WCAG AA contrast for text.
 
 Focus states visible. All interactive elements keyboard/touch friendly.
 
-Motion‑sensitive toggle to reduce animations.
+Motionâ€‘sensitive toggle to reduce animations.
 
 Colors (tokens)
 --bg: #0b0f14;            // deep slate (dark mode default)
@@ -29,15 +29,15 @@ Colors (tokens)
 
 Typography
 
-Display: Inter or Outfit (600–800 for headings).
+Display: Inter or Outfit (600â€“800 for headings).
 
-Body: 400–500. Line-height 1.3–1.5.
+Body: 400â€“500. Line-height 1.3â€“1.5.
 
 Use numerals with tabular figures for scores.
 
 Layout & Components
 
-Cards: rounded‑2xl, soft shadow, generous padding.
+Cards: roundedâ€‘2xl, soft shadow, generous padding.
 
 Buttons: solid primary for key actions; secondary outline for neutral.
 
@@ -45,15 +45,15 @@ Badges/Chips: for difficulty, frequency, streaks.
 
 Progress Bars: thick, rounded, animated fill.
 
-Avatar: circular with level ring; subtle glow on level‑up.
+Avatar: circular with level ring; subtle glow on levelâ€‘up.
 
-Motion & “Juice”
+Motion & â€œJuiceâ€
 
-150–250ms ease for UI; 300–500ms for level‑up sequences.
+150â€“250ms ease for UI; 300â€“500ms for levelâ€‘up sequences.
 
 Use particles/confetti sparingly for chore completion.
 
-Prefer scale + rotate‑tiny + alpha combos; keep 60 FPS.
+Prefer scale + rotateâ€‘tiny + alpha combos; keep 60 FPS.
 
 Iconography
 
@@ -67,12 +67,12 @@ NL first, EN second. Keep strings short and translatable.
 
 Examples:
 
-NL: "Klaar? Tik om te claimen!" → EN: "Done? Tap to claim!"
+NL: "Klaar? Tik om te claimen!" â†’ EN: "Done? Tap to claim!"
 
-NL: "Nieuwe beloning" → EN: "New reward"
+NL: "Nieuwe beloning" â†’ EN: "New reward"
 
 Empty States
 
-Friendly mascot hint, 1–2 action buttons.
+Friendly mascot hint, 1â€“2 action buttons.
 
-Example: "Nog geen klussen — voeg er een toe!" / "No chores yet — add one!"
+Example: "Nog geen klussen â€” voeg er een toe!" / "No chores yet â€” add one!"

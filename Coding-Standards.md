@@ -1,4 +1,4 @@
-Stack & Versions
+﻿Stack & Versions
 
 Language: TypeScript strict mode.
 
@@ -56,9 +56,9 @@ Encapsulate Pixi in a Client Component: <PixiBoard /> under /components/pixi.
 
 Never mutate React state inside Pixi game loop; bridge via a small event bus (RxJS or custom emitter) and props for initial config.
 
-Use a GameModel (plain TS) for grid logic; Pixi renders from that model. Keep logic renderer‑agnostic.
+Use a GameModel (plain TS) for grid logic; Pixi renders from that model. Keep logic rendererâ€‘agnostic.
 
-Ensure devicePixelRatio handling for crispness; throttle effects on low‑end devices.
+Ensure devicePixelRatio handling for crispness; throttle effects on lowâ€‘end devices.
 
 Styling
 
@@ -84,7 +84,7 @@ Unit: Vitest/Jest for pure TS (GameModel, utils).
 
 Component: Testing Library + JSDOM.
 
-E2E: Playwright for flows (setup → add kid → add chore → complete chore → claim reward).
+E2E: Playwright for flows (setup â†’ add kid â†’ add chore â†’ complete chore â†’ claim reward).
 
 Linting & Formatting
 
@@ -96,7 +96,7 @@ Use role checks on server (parent vs kid).
 
 PII minimal; no public kid names in URLs. Use IDs/slug hashes.
 
-Rate‑limit mutation routes; CSRF for non-GET where applicable.
+Rateâ€‘limit mutation routes; CSRF for non-GET where applicable.
 
 Git & CI
 

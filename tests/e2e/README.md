@@ -1,95 +1,95 @@
-# 🧪 E2E Testing with Playwright
+﻿# ðŸ§ª E2E Testing with Playwright
 
 This directory contains comprehensive end-to-end tests for KlusQuest, covering all user journeys and functionality.
 
-## 🚀 Quick Start
+## ðŸš€ Quick Start
 
 ### Run All Tests
 ```bash
-npm run test:e2e
+pnpm test:e2e
 ```
 
 ### Run Tests with UI
 ```bash
-npm run test:e2e:ui
+pnpm test:e2e:ui
 ```
 
 ### Run Tests in Headed Mode (see browser)
 ```bash
-npm run test:e2e:headed
+pnpm test:e2e:headed
 ```
 
 ### Debug Tests
 ```bash
-npm run test:e2e:debug
+pnpm test:e2e:debug
 ```
 
 ### View Test Report
 ```bash
-npm run test:e2e:report
+pnpm test:e2e:report
 ```
 
-## 📁 Test Structure
+## ðŸ“ Test Structure
 
 ### `auth.spec.ts` - Authentication & User Management
-- ✅ Sign-in/Sign-up flows
-- ✅ Protected route access
-- ✅ User authentication state
-- ✅ Sign-out functionality
+- âœ… Sign-in/Sign-up flows
+- âœ… Protected route access
+- âœ… User authentication state
+- âœ… Sign-out functionality
 
 ### `home.spec.ts` - Home Page & Navigation
-- ✅ Hero section and messaging
-- ✅ Feature showcase
-- ✅ Navigation buttons
-- ✅ Responsive design
-- ✅ Accessibility features
+- âœ… Hero section and messaging
+- âœ… Feature showcase
+- âœ… Navigation buttons
+- âœ… Responsive design
+- âœ… Accessibility features
 
 ### `kid-view.spec.ts` - PixiJS Game Experience
-- ✅ Game canvas rendering
-- ✅ Game interactions (click/touch)
-- ✅ Score and level tracking
-- ✅ Reset functionality
-- ✅ Mobile responsiveness
-- ✅ Navigation back to dashboard
+- âœ… Game canvas rendering
+- âœ… Game interactions (click/touch)
+- âœ… Score and level tracking
+- âœ… Reset functionality
+- âœ… Mobile responsiveness
+- âœ… Navigation back to dashboard
 
 ### `kid-simple.spec.ts` - Simple Kid Dashboard
-- ✅ Chore list display
-- ✅ XP/coins/level stats
-- ✅ Chore completion workflow
-- ✅ Celebration animations
-- ✅ Progress tracking
-- ✅ Mobile optimization
+- âœ… Chore list display
+- âœ… XP/coins/level stats
+- âœ… Chore completion workflow
+- âœ… Celebration animations
+- âœ… Progress tracking
+- âœ… Mobile optimization
 
 ### `chores.spec.ts` - Chore Management System
-- ✅ Create new chores
-- ✅ Edit existing chores
-- ✅ Delete chores
-- ✅ Form validation
-- ✅ Kid assignment
-- ✅ Frequency options
-- ✅ XP/coin configuration
+- âœ… Create new chores
+- âœ… Edit existing chores
+- âœ… Delete chores
+- âœ… Form validation
+- âœ… Kid assignment
+- âœ… Frequency options
+- âœ… XP/coin configuration
 
 ### `parent-dashboard.spec.ts` - Parent Dashboard
-- ✅ Household overview with stats
-- ✅ Kid management (add/edit/delete)
-- ✅ Avatar selection
-- ✅ Progress tracking
-- ✅ Chore approval system
-- ✅ Quick actions navigation
-- ✅ Mobile responsiveness
+- âœ… Household overview with stats
+- âœ… Kid management (add/edit/delete)
+- âœ… Avatar selection
+- âœ… Progress tracking
+- âœ… Chore approval system
+- âœ… Quick actions navigation
+- âœ… Mobile responsiveness
 
 ### `api.spec.ts` - API Endpoint Testing
-- ✅ Authentication requirements
-- ✅ Error handling
-- ✅ Request validation
-- ✅ Response structure
-- ✅ Edge case handling
+- âœ… Authentication requirements
+- âœ… Error handling
+- âœ… Request validation
+- âœ… Response structure
+- âœ… Edge case handling
 
-## 🎯 Test Coverage
+## ðŸŽ¯ Test Coverage
 
 ### **User Journeys Tested:**
 1. **New User Onboarding**
-   - Home page → Sign up → Dashboard
+   - Home page â†’ Sign up â†’ Dashboard
    - First kid creation
    - First chore creation
 
@@ -112,13 +112,13 @@ npm run test:e2e:report
    - Error handling
 
 ### **Quality Assurance:**
-- ✅ **Responsiveness**: Mobile and desktop layouts
-- ✅ **Accessibility**: Screen reader support, keyboard navigation
-- ✅ **Performance**: Loading states, error boundaries
-- ✅ **Security**: Authentication, authorization
-- ✅ **Data Integrity**: Form validation, API responses
+- âœ… **Responsiveness**: Mobile and desktop layouts
+- âœ… **Accessibility**: Screen reader support, keyboard navigation
+- âœ… **Performance**: Loading states, error boundaries
+- âœ… **Security**: Authentication, authorization
+- âœ… **Data Integrity**: Form validation, API responses
 
-## 🔧 Test Configuration
+## ðŸ”§ Test Configuration
 
 ### **Playwright Config** (`playwright.config.ts`)
 - **Browsers**: Chrome, Firefox, Safari, Mobile Chrome, Mobile Safari
@@ -133,7 +133,7 @@ npm run test:e2e:report
 - **Authentication**: Mocked Clerk integration
 - **API**: Full backend testing with real endpoints
 
-## 🚨 Important Notes
+## ðŸš¨ Important Notes
 
 ### **Authentication Mocking**
 Since we're testing without real Clerk keys, tests use mocked authentication:
@@ -150,32 +150,32 @@ Tests assume a clean database state. The `db:seed` script provides consistent te
 ### **Async Operations**
 Many tests include `waitForTimeout()` calls to handle animations and API responses. In production, these should be replaced with proper wait conditions.
 
-## 🐛 Troubleshooting
+## ðŸ› Troubleshooting
 
 ### **Tests Failing?**
-1. **Check dev server**: Ensure `npm run dev` is running on port 3001
-2. **Database state**: Run `npm run db:seed` to reset test data
-3. **Browser issues**: Try `npm run test:e2e:headed` to see what's happening
+1. **Check dev server**: Ensure `pnpm dev` is running on port 3001
+2. **Database state**: Run `pnpm db:seed` to reset test data
+3. **Browser issues**: Try `pnpm test:e2e:headed` to see what's happening
 
 ### **Common Issues**
 - **Port conflicts**: Change port in `playwright.config.ts`
 - **Database locks**: Restart dev server
 - **Authentication errors**: Check mocked Clerk setup
 
-## 📊 Test Results
+## ðŸ“Š Test Results
 
 After running tests, view the HTML report:
 ```bash
-npm run test:e2e:report
+pnpm test:e2e:report
 ```
 
 The report shows:
-- ✅ Passed tests
-- ❌ Failed tests with screenshots
-- 📹 Video recordings of failures
-- 🔍 Detailed error information
+- âœ… Passed tests
+- âŒ Failed tests with screenshots
+- ðŸ“¹ Video recordings of failures
+- ðŸ” Detailed error information
 
-## 🎉 Success Metrics
+## ðŸŽ‰ Success Metrics
 
 **Target Coverage**: 100% of user journeys
 **Performance**: All tests complete in <5 minutes
@@ -183,4 +183,4 @@ The report shows:
 
 ---
 
-**Happy Testing! 🧪✨** 
+**Happy Testing! ðŸ§ªâœ¨** 

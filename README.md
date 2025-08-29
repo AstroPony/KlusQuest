@@ -56,6 +56,18 @@ Gamified chores & allowance tracker for Dutch families.
 - `pnpm lint` - Run ESLint
 - `pnpm prisma:migrate` - Run database migrations
 
+## Commands Reference
+
+- Setup: `pnpm install`
+- Dev server: `pnpm dev`
+- Build: `pnpm build`
+- Lint: `pnpm lint`
+- Typecheck: `pnpm typecheck`
+- Prisma generate: `pnpm prisma:generate`
+- Prisma migrate: `pnpm prisma:migrate --name <name>`
+- Seed database: `pnpm exec tsx prisma/seed.ts` (if seed script exists)
+- E2E tests: `pnpm test:e2e`, UI: `pnpm test:e2e:ui`, report: `pnpm test:e2e:report`
+
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript
@@ -75,6 +87,18 @@ DATABASE_URL="file:./dev.db"
 NEXT_PUBLIC_DEFAULT_LOCALE=nl
 NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en
 ```
+
+## Documentation
+
+- Getting Started: `how-to-run.md`
+- Overview: `DOCS-OVERVIEW.md`
+- E2E Testing Summary: `E2E-TESTING-SUMMARY.md`
+- E2E Tests Guide: `tests/e2e/README.md`
+- Coding Standards: `Coding-Standards.md`
+- Style Guide: `Style-Guide.md`
+- Project Status: `PROJECT-STATUS.md`
+- TODOs & Roadmap: `TODO.md`
+- User Journeys: `USER_JOURNEY_ANALYSIS.md`
 
 ## Next Steps
 

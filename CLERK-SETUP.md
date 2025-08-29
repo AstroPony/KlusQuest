@@ -1,25 +1,25 @@
-# 🔐 Clerk Authentication Setup Guide
+﻿# ðŸ” Clerk Authentication Setup Guide
 
-## 🚀 **Step 1: Create Clerk Account**
+## ðŸš€ **Step 1: Create Clerk Account**
 
 1. Go to [https://dashboard.clerk.com/](https://dashboard.clerk.com/)
 2. Click "Sign up" and create an account
 3. Verify your email
 
-## 🏗️ **Step 2: Create New Application**
+## ðŸ—ï¸ **Step 2: Create New Application**
 
 1. Click "Add application"
 2. Choose "Next.js" as your framework
 3. Give it a name: `KlusQuest`
 4. Click "Create application"
 
-## 🔑 **Step 3: Get Your API Keys**
+## ðŸ”‘ **Step 3: Get Your API Keys**
 
 1. In your new application, go to **API Keys** in the sidebar
 2. Copy the **Publishable Key** (starts with `pk_test_...`)
 3. Copy the **Secret Key** (starts with `sk_test_...`)
 
-## ⚙️ **Step 4: Update Environment Variables**
+## âš™ï¸ **Step 4: Update Environment Variables**
 
 Replace the placeholder values in your `.env.local` file:
 
@@ -29,20 +29,20 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_YOUR_ACTUAL_KEY_HERE"
 CLERK_SECRET_KEY="sk_test_YOUR_ACTUAL_SECRET_HERE"
 ```
 
-## 🌐 **Step 5: Configure Allowed Origins**
+## ðŸŒ **Step 5: Configure Allowed Origins**
 
-1. In Clerk dashboard, go to **Settings** → **Domains**
+1. In Clerk dashboard, go to **Settings** â†’ **Domains**
 2. Add your development domain: `http://localhost:3000`
 3. Add your production domain when ready
 
-## 🧪 **Step 6: Test Authentication**
+## ðŸ§ª **Step 6: Test Authentication**
 
-1. Restart your development server: `npm run dev`
+1. Restart your development server: `pnpm dev`
 2. Go to [http://localhost:3000](http://localhost:3000)
 3. Click "Account Aanmaken" to test sign-up
 4. Try logging in with your new account
 
-## 🔧 **Step 7: Enable Clerk Middleware**
+## ðŸ”§ **Step 7: Enable Clerk Middleware**
 
 Once Clerk is working, update your `middleware.ts`:
 
@@ -59,7 +59,7 @@ export const config = {
 };
 ```
 
-## ✅ **What You'll Get**
+## âœ… **What You'll Get**
 
 - **User Registration & Login**: Beautiful, customizable forms
 - **Email Verification**: Automatic email verification
@@ -68,7 +68,7 @@ export const config = {
 - **Session Management**: Secure session handling
 - **Multi-factor Auth**: Optional 2FA support
 
-## 🚨 **Troubleshooting**
+## ðŸš¨ **Troubleshooting**
 
 ### **Build Errors**
 - Make sure your API keys are correct
@@ -85,7 +85,7 @@ export const config = {
 - Check Clerk dashboard for user creation
 - Verify email verification if enabled
 
-## 🎯 **Next Steps After Setup**
+## ðŸŽ¯ **Next Steps After Setup**
 
 1. **Test user registration and login**
 2. **Build household creation flow**
