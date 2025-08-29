@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 
 test.describe('API Endpoints', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('API Endpoints', () => {
     const postResponse = await page.request.post('/api/kids', {
       data: {
         displayName: 'Test Kid',
-        avatar: '👶'
+        avatar: 'ok'
       }
     });
     expect(postResponse.status()).toBe(401);
@@ -87,7 +87,7 @@ test.describe('API Endpoints', () => {
     const putResponse = await page.request.put('/api/kids/test-id', {
       data: {
         displayName: 'Updated Kid',
-        avatar: '👧'
+        avatar: 'ok'
       }
     });
     expect(putResponse.status()).toBe(401);
