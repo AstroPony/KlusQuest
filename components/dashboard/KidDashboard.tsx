@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { KidEarningsSummary } from "@/components/ui/KidEarningsSummary";
 import ChoreList from "@/components/chores/ChoreList";
 import ProgressBar from "@/components/ui/ProgressBar";
 import Celebration from "@/components/ui/Celebration";
 import GameRewards from "@/components/game/GameRewards";
+import { enqueueCompletion, flushQueue, initOfflineQueue } from "@/lib/offlineQueue";
+import { KidEarningsSummary } from "@/components/ui/KidEarningsSummary";
 
 type Chore = {
   id: string;
@@ -63,6 +64,10 @@ export default function KidDashboard({ kidId, kidName }: Props) {
 
   useEffect(() => {
     fetchKidData();
+    if (typeof window !== 'undefined') {
+      initOfflineQueue();
+      flushQueue();
+    }
   }, [kidId]);
 
   const fetchKidData = async () => {
@@ -111,13 +116,20 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         return;
       }
 
-      const response = await fetch(`/api/chores/${choreId}/complete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kidId: kidIdToUse })
-      });
-
-      if (!response.ok) throw new Error("Failed to complete chore");
+      let ok = false;
+      try {
+        const response = await fetch(`/api/chores/${choreId}/complete`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ kidId: kidIdToUse })
+        });
+        ok = response.ok;
+      } catch {
+        ok = false;
+      }
+      if (!ok) {
+        enqueueCompletion({ choreId, kidId: kidIdToUse });
+      }
 
       // Update local state
       setChores(prev => prev.map(c => 
