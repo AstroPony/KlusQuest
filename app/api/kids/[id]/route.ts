@@ -1,12 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
+import { z } from "zod";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `kids:PUT:${ip}`, limit: 30, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -70,8 +77,8 @@ export async function PUT(
     const updatedKid = await prisma.kid.update({
       where: { id: params.id },
       data: {
-        displayName: displayName.trim(),
-        avatar: avatar || "👶"
+        displayName: displayName,
+        avatar: avatar || "🙂"
       },
       select: {
         id: true,
@@ -99,6 +106,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `kids:DELETE:${ip}`, limit: 20, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -162,3 +174,6 @@ export async function DELETE(
     );
   }
 } 
+
+
+

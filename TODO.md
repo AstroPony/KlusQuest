@@ -101,9 +101,22 @@
 
 - [ ] **Production Features**
   - [ ] Multi-language support (i18n)
+    - [ ] Add next-intl provider and locale routing
+    - [ ] Extract all UI strings to messages (NL/EN)
+    - [ ] Language switcher wired to provider + storage
+    - [ ] Locale persistence and SSR aware
   - [ ] Progressive Web App (PWA)
-  - [ ] Offline support
-  - [ ] Analytics dashboard
+    - [ ] Verify manifest icons/sizes and start_url
+    - [ ] Add install prompt UX (non-blocking)
+    - [ ] Tune service worker caching strategies
+  - [ ] Offline support (kid flow first)
+    - [ ] Queue chore completions offline and sync
+    - [ ] Optimistic UI updates with rollback
+    - [ ] Background sync when online
+  - [ ] Analytics & Observability
+    - [ ] Add Sentry for FE/BE error monitoring
+    - [ ] Minimal event analytics (onboarding funnel)
+    - [ ] Dashboard for core metrics
 
 ---
 
@@ -121,13 +134,16 @@
   - [ ] Code splitting
   - [ ] Database query optimization
   - [ ] Caching strategies
+  - [ ] Bundle analysis and tree-shaking review
+  - [ ] Pixi throttling on low-end devices
 
 ### **Security & Privacy**
 - [ ] **Data Protection**
-  - [ ] Input validation with Zod
-  - [ ] Rate limiting
-  - [ ] CSRF protection
-  - [ ] Data encryption
+  - [ ] Input validation with Zod (all API routes)
+  - [ ] Rate limiting on sensitive routes
+  - [ ] CSRF protection (non-GET where applicable)
+  - [ ] Data encryption at rest/in transit (review)
+  - [ ] Audit log for sensitive actions
 
 - [ ] **User Privacy**
   - [ ] GDPR compliance
@@ -152,6 +168,8 @@
   - [ ] Keyboard navigation
   - [ ] Color contrast improvements
   - [ ] Focus management
+  - [ ] Reduced motion toggle
+  - [ ] Labels/ARIA for game and dashboard interactions
 
 ---
 

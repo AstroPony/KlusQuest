@@ -1,9 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
+import { z } from "zod";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `kids:GET:${ip}`, limit: 60, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -68,20 +75,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `kids:POST:${ip}`, limit: 20, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { displayName, avatar } = body;
-
-    if (!displayName || displayName.trim().length < 2) {
-      return NextResponse.json(
-        { error: "Display name must be at least 2 characters" },
-        { status: 400 }
-      );
+    const schema = z.object({
+      displayName: z.string().trim().min(2).max(50),
+      avatar: z.string().trim().max(64).optional(),
+    });
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request", details: parsed.error.flatten() }, { status: 400 });
     }
+    const { displayName, avatar } = parsed.data;
 
     // Get or create user
     let user = await prisma.user.findUnique({
@@ -118,8 +131,8 @@ export async function POST(request: NextRequest) {
     // Create the kid
     const kid = await prisma.kid.create({
       data: {
-        displayName: displayName.trim(),
-        avatar: avatar || "👶",
+        displayName: displayName,
+        avatar: avatar || "🙂",
         householdId: user.household.id,
         level: 1,
         xp: 0,
