@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import PayoutSettings from "@/components/ui/PayoutSettings";
 import { useUser } from "@clerk/nextjs";
 import SignOutButton from "@/components/auth/SignOutButton";
 import KidForm from "@/components/dashboard/KidForm";
@@ -56,6 +57,8 @@ export default function Dashboard() {
   const [editingKid, setEditingKid] = useState<Kid | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   // Fetch data on component mount
   useEffect(() => {
@@ -161,6 +164,25 @@ export default function Dashboard() {
     }
   };
 
+  const handleGenerateInvite = async (kidId: string) => {
+    try {
+      const response = await fetch(`/api/kids/${kidId}/invite`, {
+        method: "POST"
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate invite link");
+      }
+
+      const data = await response.json();
+      setInviteLink(data.inviteUrl);
+      setShowInviteModal(true);
+    } catch (err) {
+      setError("Kon uitnodigingslink niet genereren");
+      console.error(err);
+    }
+  };
+
   const handleApproveCompletion = async (completionId: string) => {
     try {
       const response = await fetch(`/api/household/completions/${completionId}/approve`, {
@@ -211,15 +233,30 @@ export default function Dashboard() {
 
   return (
     <main className="p-6 max-w-7xl mx-auto space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Parent Dashboard</h1>
-          <p className="text-muted">Welkom, {user.firstName || user.emailAddresses[0]?.emailAddress}</p>
+      <PayoutSettings />
+      <header className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Parent Dashboard</h1>
+            <p className="text-muted">Welkom, {user.firstName || user.emailAddresses[0]?.emailAddress}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-muted">Account</p>
+            <p className="font-medium">{user.emailAddresses[0]?.emailAddress}</p>
+            <SignOutButton />
+          </div>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-muted">Account</p>
-          <p className="font-medium">{user.emailAddresses[0]?.emailAddress}</p>
-          <SignOutButton />
+        
+        <div className="flex gap-3">
+          <a href="/" className="btn-ghost">
+            🏠 Terug naar Home
+          </a>
+          <a href="/chores" className="btn-secondary">
+            📋 Klussen Beheren
+          </a>
+          <a href="/kid-simple" className="btn-secondary">
+            👶 Kid View Testen
+          </a>
         </div>
       </header>
 
@@ -276,6 +313,7 @@ export default function Dashboard() {
           kids={kids}
           onEdit={setEditingKid}
           onDelete={handleDeleteKid}
+          onGenerateInvite={handleGenerateInvite}
         />
       </section>
 
@@ -299,19 +337,53 @@ export default function Dashboard() {
             <p className="text-sm text-muted">Voeg klussen toe en wijs ze toe</p>
           </a>
           
-          <button className="card p-6 text-center hover:bg-accent/5 transition-colors">
-            <div className="text-3xl mb-2">💰</div>
-            <h3 className="font-semibold">Beloningen</h3>
-            <p className="text-sm text-muted">Maak beloningen voor je kinderen</p>
-          </button>
+          <a href="/kid-simple" className="card p-6 text-center hover:bg-accent/5 transition-colors">
+            <div className="text-3xl mb-2">👶</div>
+            <h3 className="font-semibold">Kid View Testen</h3>
+            <p className="text-sm text-muted">Bekijk hoe je kinderen de app zien</p>
+          </a>
           
-          <button className="card p-6 text-center hover:bg-accent/5 transition-colors">
-            <div className="text-3xl mb-2">📊</div>
-            <h3 className="font-semibold">Rapporten</h3>
-            <p className="text-sm text-muted">Bekijk voortgang en statistieken</p>
-          </button>
+          <a href="/kid" className="card p-6 text-center hover:bg-accent/5 transition-colors">
+            <div className="text-3xl mb-2">🎮</div>
+            <h3 className="font-semibold">PixiJS Game Demo</h3>
+            <p className="text-sm text-muted">Test de game functionaliteit</p>
+          </a>
         </div>
       </section>
+
+      {/* Invite Link Modal */}
+      {showInviteModal && inviteLink && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-semibold mb-4">🔗 Uitnodigingslink gegenereerd</h3>
+            <p className="text-sm text-muted mb-4">
+              Deel deze link met je kind om toegang te geven tot de app zonder login.
+            </p>
+            
+            <div className="bg-gray-100 p-3 rounded mb-4 break-all">
+              <code className="text-sm">{inviteLink}</code>
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(inviteLink);
+                  alert("Link gekopieerd naar klembord!");
+                }}
+                className="btn-primary flex-1"
+              >
+                📋 Kopieer Link
+              </button>
+              <button
+                onClick={() => setShowInviteModal(false)}
+                className="btn-secondary"
+              >
+                Sluiten
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 } 

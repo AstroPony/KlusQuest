@@ -35,6 +35,7 @@ model Household {
 
   name      String    @default("Mijn gezin")
   locale    String    @default("nl")
+  tokenRateCents Int  @default(0)
 
   kids      Kid[]
   rewards   Reward[]
@@ -56,11 +57,13 @@ model Kid {
   level       Int           @default(1)
   xp          Int           @default(0)
   coins       Int           @default(0)
+  bankAccount String?
 
   chores      Chore[]
   completions Completion[]
   claims      Claim[]
   ledger      Transaction[]
+  payouts     PaymentRequest[]
 }
 
 model Chore {
@@ -142,4 +145,20 @@ model Transaction {
 
   amount     Int
   reason     String
-} 
+}
+
+model PaymentRequest {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  kidId        String
+  kid          Kid      @relation(fields: [kidId], references: [id])
+
+  coins        Int
+  amountCents  Int
+  status       String   @default("REQUESTED") // REQUESTED | CONFIRMED | CANCELLED
+  requestedAt  DateTime @default(now())
+  confirmedAt  DateTime?
+  link         String?
+}
