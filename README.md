@@ -60,12 +60,13 @@ Gamified chores & allowance tracker for Dutch families.
 
 - Setup: `pnpm install`
 - Dev server: `pnpm dev`
+- Start (prod build): `pnpm start`
 - Build: `pnpm build`
 - Lint: `pnpm lint`
 - Typecheck: `pnpm typecheck`
 - Prisma generate: `pnpm prisma:generate`
 - Prisma migrate: `pnpm prisma:migrate --name <name>`
-- Seed database: `pnpm exec tsx prisma/seed.ts` (if seed script exists)
+- Seed database: `pnpm db:seed` or `pnpm exec tsx prisma/seed.ts`
 - E2E tests: `pnpm test:e2e`, UI: `pnpm test:e2e:ui`, report: `pnpm test:e2e:report`
 
 ## Tech Stack
