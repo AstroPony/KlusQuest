@@ -5,6 +5,14 @@ import { Providers } from './providers'
 export const metadata = {
   title: "KlusQuest",
   description: "Gamified chores & allowance tracker",
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  themeColor: "#3b82f6",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -14,6 +22,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>
           {children}
         </Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

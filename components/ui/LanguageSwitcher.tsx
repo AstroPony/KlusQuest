@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,7 +11,7 @@ type Language = {
 };
 
 const languages: Language[] = [
-  { code: "en", name: "English", flag: "🇺🇸", locale: "en-US" },
+  { code: "en", name: "English", flag: "🇬🇧", locale: "en-US" },
   { code: "nl", name: "Nederlands", flag: "🇳🇱", locale: "nl-NL" },
   { code: "de", name: "Deutsch", flag: "🇩🇪", locale: "de-DE" },
   { code: "fr", name: "Français", flag: "🇫🇷", locale: "fr-FR" },
@@ -80,3 +80,4 @@ export default function LanguageSwitcher() {
     </div>
   );
 } 
+

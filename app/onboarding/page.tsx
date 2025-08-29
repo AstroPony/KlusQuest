@@ -125,8 +125,19 @@ export default function OnboardingPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-bg via-card to-bg flex items-center justify-center p-6">
       <div className="w-full max-w-md">
+        {/* Navigation */}
+        <div className="mb-6 text-center">
+          <a href="/" className="btn-ghost">
+            🏠 Terug naar Home
+          </a>
+        </div>
+
         {/* Progress indicator */}
         <div className="mb-8">
+          {/* Keep a stable main heading for tests and clarity */}
+          <h1 className="text-3xl font-bold text-center mb-2">Welkom bij KlusQuest</h1>
+          <p className="text-center text-muted mb-4">Snel starten in drie eenvoudige stappen</p>
+
           <div className="flex items-center justify-center space-x-2 mb-4">
             {["role", "household", "complete"].map((step, index) => (
               <div
@@ -143,7 +154,7 @@ export default function OnboardingPage() {
           </div>
           
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-2">{getStepTitle()}</h1>
+            <h2 className="text-2xl font-semibold mb-2">{getStepTitle()}</h2>
             <p className="text-muted">{getStepDescription()}</p>
           </div>
         </div>
