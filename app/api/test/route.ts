@@ -4,10 +4,22 @@ import { prisma } from '@/lib/db/prisma'
 export async function GET() {
   try {
     const households = await prisma.household.findMany({
-      include: {
-        owner: true,
-        kids: true,
-        chores: true
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        ownerId: true,
+        name: true,
+        locale: true,
+        owner: {
+          select: { id: true, email: true, role: true }
+        },
+        kids: {
+          select: { id: true, displayName: true, level: true, xp: true, coins: true }
+        },
+        chores: {
+          select: { id: true, title: true, frequency: true, active: true }
+        }
       }
     })
 
