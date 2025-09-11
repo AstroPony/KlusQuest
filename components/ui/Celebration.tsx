@@ -38,7 +38,7 @@ export default function Celebration({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="relative bg-gradient-to-br from-green-500 to-blue-600 rounded-3xl p-8 text-center text-white shadow-2xl animate-bounce">
+      <div className="relative bg-gradient-to-br from-green-500 to-blue-600 rounded-3xl p-8 text-center text-white shadow-2xl">
         {/* Confetti effect */}
         {showConfetti && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none">

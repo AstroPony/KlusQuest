@@ -2,52 +2,34 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Kid Simple Page - Public Access', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to kid-simple page
+    // Navigate to kid-simple page for each test
     await page.goto('/kid-simple');
   });
 
-  test('should load kid-simple page successfully', async ({ page }) => {
-    // Wait for page to load completely
+  test('should require authentication for kid-simple page', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     
-    // Check that the page loads
-    await expect(page.locator('h1')).toBeVisible();
-    
-    // Check for chore list
-    await expect(page.getByText(/Tafel afruimen/i)).toBeVisible();
-    await expect(page.getByText(/Kamer opruimen/i)).toBeVisible();
-    await expect(page.getByText(/Afval weggooien/i)).toBeVisible();
+    // Should show authentication required message
+    await expect(page.getByText(/Je moet ingelogd zijn/i)).toBeVisible();
+    await expect(page.getByRole('link', { name: /Inloggen/i })).toBeVisible();
   });
 
-  test('should show kid stats', async ({ page }) => {
+  test('should show proper authentication prompt', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     
-    // Check for stats display
-    await expect(page.getByText(/XP/i)).toBeVisible();
-    await expect(page.getByText(/Coins|Munten/i)).toBeVisible();
-    await expect(page.getByText(/Level/i)).toBeVisible();
+    // Check authentication message
+    await expect(page.getByText(/Je moet ingelogd zijn/i)).toBeVisible();
+    await expect(page.getByText(/Log in om de kid view te bekijken/i)).toBeVisible();
+    
+    // Check for sign-in button
+    await expect(page.getByRole('link', { name: /Inloggen/i })).toBeVisible();
   });
 
-  test('should show chore completion buttons', async ({ page }) => {
+  test('should have navigation back to home', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     
-    // Check for completion buttons
-    const completeButtons = page.getByRole('button', { name: /Klaar|Done/i });
-    await expect(completeButtons.first()).toBeVisible();
-  });
-
-  test('should have navigation back to dashboard', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
-    
-    // Check for navigation link
-    const backLink = page.getByRole('link', { name: /Terug naar Dashboard|Back to Dashboard/i });
-    await expect(backLink).toBeVisible();
-    
-    // Click the link
-    await backLink.click();
-    
-    // Should navigate back to home page (since dashboard requires auth)
-    await expect(page).toHaveURL('/');
+    // Check for home navigation
+    await expect(page.getByRole('link', { name: /🏠 Home/i })).toBeVisible();
   });
 
   test('should be responsive on mobile', async ({ page }) => {
@@ -56,30 +38,30 @@ test.describe('Kid Simple Page - Public Access', () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     
-    // Check that content is still visible
-    await expect(page.locator('h1')).toBeVisible();
-    await expect(page.getByText(/Tafel afruimen/i)).toBeVisible();
-    
-    // Check that buttons are properly sized for touch
-    const completeButton = page.getByRole('button', { name: /Klaar|Done/i }).first();
-    const buttonBox = await completeButton.boundingBox();
-    expect(buttonBox?.height).toBeGreaterThan(44); // Minimum touch target
+    // Check that authentication message is still visible
+    await expect(page.getByText(/Je moet ingelogd zijn/i)).toBeVisible();
+    await expect(page.getByRole('link', { name: /Inloggen/i })).toBeVisible();
   });
 
-  test('should handle chore completion interaction', async ({ page }) => {
+  test('should have proper page structure', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     
-    // Find a chore completion button
-    const completeButton = page.getByRole('button', { name: /Klaar|Done/i }).first();
-    await expect(completeButton).toBeVisible();
-    
-    // Click the button (this should trigger some interaction)
-    await completeButton.click();
-    
-    // Wait a moment for any animation or state change
-    await page.waitForTimeout(1000);
-    
-    // Page should still be functional
+    // Check for main content
+    await expect(page.locator('main')).toBeVisible();
     await expect(page.locator('h1')).toBeVisible();
+    
+    // Check for proper heading
+    const heading = page.locator('h1');
+    await expect(heading).toContainText(/Je moet ingelogd zijn/i);
+  });
+
+  test('should handle authentication flow correctly', async ({ page }) => {
+    await page.waitForLoadState('networkidle');
+    
+    // Click sign-in link
+    await page.getByRole('link', { name: /Inloggen/i }).click();
+    
+    // Should navigate to sign-in page
+    await expect(page).toHaveURL(/.*sign-in/);
   });
 }); 

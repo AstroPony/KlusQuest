@@ -15,7 +15,18 @@ export async function GET(
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -26,7 +37,18 @@ export async function GET(
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
     }
 

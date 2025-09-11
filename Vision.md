@@ -97,3 +97,4 @@ Design for touch first (mobile primary, desktop secondary).
 Every action should feel good: microâ€‘animations, confetti, sounds (muted by default).
 
 Optimize the first session: guided setup â†’ first chore â†’ first reward preview.
+

@@ -15,6 +15,8 @@ export default function SignInPage() {
             elements: {
               rootBox: "mx-auto",
               card: "bg-card border border-white/10 shadow-xl",
+              socialButtonsBlockButtonText: "text-white",
+              socialButtonsBlockButton: "text-white",
             }
           }}
         />

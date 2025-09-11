@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
+import SignOutButton from "@/components/auth/SignOutButton";
 
 export default async function Home() {
   const { userId } = await auth();
@@ -11,11 +12,11 @@ export default async function Home() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             KlusQuest
           </h1>
-          <nav className="flex gap-3">
+          <nav className="flex items-center gap-3">
             {userId ? (
               <>
                 <Link className="btn-ghost" href="/dashboard">Dashboard</Link>
-                <Link className="btn-primary" href="/kid-simple">🎯 Eenvoudige Kid View</Link>
+                <Link className="btn-primary" href="/kid-simple">🧒 Eenvoudige Kid View</Link>
               </>
             ) : (
               <>
@@ -25,6 +26,11 @@ export default async function Home() {
             )}
           </nav>
         </header>
+        {userId ? (
+          <div className="text-right">
+            <SignOutButton className="btn-ghost" />
+          </div>
+        ) : null}
 
         {/* Hero Section */}
         <section className="text-center space-y-6 py-12">
@@ -35,17 +41,14 @@ export default async function Home() {
             </span>
           </h2>
           <p className="text-xl text-muted max-w-2xl mx-auto">
-            KlusQuest maakt huishoudelijke taken voelen als een spel. Kinderen verdienen XP en munten, 
-            ouders houden overzicht. Win-win voor iedereen! 🎮✨
+            KlusQuest maakt huishoudelijke taken voelen als een spel. Kinderen verdienen XP en munten,
+            ouders houden overzicht. Win-win voor iedereen!
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             {userId ? (
               <>
                 <Link className="btn-primary text-lg px-8 py-3" href="/kid-simple">
-                  🎯 Eenvoudige Kid View
-                </Link>
-                <Link className="btn-ghost text-lg px-8 py-3" href="/kid">
-                  🎮 PixiJS Game Demo
+                  🧒 Eenvoudige Kid View
                 </Link>
                 <Link className="btn-ghost text-lg px-8 py-3" href="/dashboard">
                   📊 Open Dashboard
@@ -57,7 +60,10 @@ export default async function Home() {
                   🚀 Start Gratis
                 </Link>
                 <Link className="btn-ghost text-lg px-8 py-3" href="/sign-in">
-                  🔑 Al een account?
+                  🔐 Al een account?
+                </Link>
+                <Link className="btn-ghost text-lg px-8 py-3" href="/onboarding">
+                  🧭 Onboarding
                 </Link>
               </>
             )}
@@ -69,15 +75,15 @@ export default async function Home() {
           <div className="card text-center space-y-3">
             <div className="text-4xl">🎮</div>
             <h3 className="text-xl font-semibold">Gamified Experience</h3>
-            <p className="text-muted">Klussen voelen als quests met PixiJS animaties</p>
+            <p className="text-muted">Klussen voelen als speelse quests met XP en badges</p>
           </div>
           <div className="card text-center space-y-3">
-            <div className="text-4xl">💰</div>
+            <div className="text-4xl">🏆</div>
             <h3 className="text-xl font-semibold">Reward System</h3>
             <p className="text-muted">Verdien XP en munten voor beloningen</p>
           </div>
           <div className="card text-center space-y-3">
-            <div className="text-4xl">🌍</div>
+            <div className="text-4xl">🌐</div>
             <h3 className="text-xl font-semibold">Bilingual</h3>
             <p className="text-muted">Nederlands + Engels ondersteuning</p>
           </div>
@@ -86,7 +92,7 @@ export default async function Home() {
         {/* Quick Stats */}
         <section className="card bg-gradient-to-r from-primary/10 to-accent/10 border-primary/20">
           <div className="text-center space-y-2">
-            <h3 className="text-xl font-semibold">🚀 Klaar om te beginnen?</h3>
+            <h3 className="text-xl font-semibold">✅ Klaar om te beginnen?</h3>
             <p className="text-muted">
               Start vandaag nog met het gamificeren van klussen in jouw gezin!
             </p>
@@ -95,4 +101,4 @@ export default async function Home() {
       </div>
     </main>
   );
-} 
+}

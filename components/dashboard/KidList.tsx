@@ -14,9 +14,10 @@ interface KidListProps {
   kids: Kid[];
   onEdit: (kid: Kid) => void;
   onDelete: (kidId: string) => void;
+  onGenerateInvite?: (kidId: string) => void;
 }
 
-export default function KidList({ kids, onEdit, onDelete }: KidListProps) {
+export default function KidList({ kids, onEdit, onDelete, onGenerateInvite }: KidListProps) {
   if (kids.length === 0) {
     return (
       <div className="card p-8 text-center">
@@ -47,6 +48,15 @@ export default function KidList({ kids, onEdit, onDelete }: KidListProps) {
             </div>
             
             <div className="flex items-center space-x-2">
+              {onGenerateInvite && (
+                <button
+                  onClick={() => onGenerateInvite(kid.id)}
+                  className="btn-sm btn-secondary"
+                  title="Uitnodigingslink genereren"
+                >
+                  🔗
+                </button>
+              )}
               <button
                 onClick={() => onEdit(kid)}
                 className="btn-sm btn-ghost"

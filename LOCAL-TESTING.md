@@ -28,8 +28,8 @@ Your app will be available at: **http://localhost:3000**
   - âœ… Celebration alerts when chores are completed
   - âœ… Responsive design that works on mobile
 
-#### **3. PixiJS Game Demo**
-- **URL**: http://localhost:3000/kid
+#### **3. Kid View (Simplified)**
+- **URL**: http://localhost:3000/kid-simple
   - âœ… Interactive 6x6 grid of colored tiles
   - âœ… Click tiles to see animations and earn points
   - âœ… Score, level, and moves tracking
@@ -181,7 +181,7 @@ pnpm exec tsx prisma/seed.ts
 - [ ] **Home Page**: Landing page loads correctly
 - [ ] **Navigation**: Buttons show correct state
 - [ ] **Simple Kid View**: Chore completion works
-- [ ] **PixiJS Demo**: Game interactions work
+ 
 - [ ] **Database API**: Sample data returns correctly
 - [ ] **Authentication**: Sign up/in flows work
 - [ ] **Onboarding**: Role selection and household creation

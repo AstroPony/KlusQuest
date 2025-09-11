@@ -49,6 +49,20 @@ test.describe('Simple Demo Pages', () => {
     await expect(page.locator('h1').first()).toBeVisible();
   });
 
+  test('should navigate to onboarding page successfully', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Click onboarding link
+    await page.getByRole('link', { name: /Onboarding/i }).click();
+    
+    // Should navigate to onboarding page
+    await expect(page).toHaveURL('/onboarding');
+    
+    // Check that onboarding page loads
+    await expect(page.locator('h1').first()).toContainText(/Welkom bij KlusQuest/i);
+  });
+
   test('should be fully responsive on mobile', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
@@ -116,6 +130,14 @@ test.describe('Simple Demo Pages', () => {
     // Navigate to sign-up
     await page.getByRole('link', { name: /Account Aanmaken|Sign Up/i }).click();
     await expect(page).toHaveURL(/.*sign-up/);
+    
+    // Go back to home
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    
+    // Navigate to onboarding
+    await page.getByRole('link', { name: /Onboarding/i }).click();
+    await expect(page).toHaveURL('/onboarding');
     
     // Go back to home
     await page.goto('/');

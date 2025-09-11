@@ -36,6 +36,13 @@ test.describe('Public Functionality', () => {
     await expect(page.getByText(/Bilingual/i)).toBeVisible();
   });
 
+  test('should show onboarding link for new users', async ({ page }) => {
+    await page.waitForLoadState('networkidle');
+    
+    // Check for onboarding link
+    await expect(page.getByRole('link', { name: /Onboarding/i })).toBeVisible();
+  });
+
   test('should navigate to sign-in page', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     

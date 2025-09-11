@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ChoreList from "@/components/chores/ChoreList";
 import ProgressBar from "@/components/ui/ProgressBar";
 import Celebration from "@/components/ui/Celebration";
@@ -61,16 +61,9 @@ export default function KidDashboard({ kidId, kidName }: Props) {
 
   // Game rewards state
   const [showGameRewards, setShowGameRewards] = useState(false);
+  const [luxuryUnlocked, setLuxuryUnlocked] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchKidData();
-    if (typeof window !== 'undefined') {
-      initOfflineQueue();
-      flushQueue();
-    }
-  }, [kidId]);
-
-  const fetchKidData = async () => {
+  const fetchKidData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -101,7 +94,15 @@ export default function KidDashboard({ kidId, kidName }: Props) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [kidId]);
+
+  useEffect(() => {
+    fetchKidData();
+    if (typeof window !== 'undefined') {
+      initOfflineQueue();
+      flushQueue();
+    }
+  }, [fetchKidData]);
 
   const handleCompleteChore = async (choreId: string, choreKidId: string) => {
     try {
@@ -125,10 +126,14 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         });
         ok = response.ok;
       } catch {
-        ok = false;
-      }
-      if (!ok) {
+        // If offline, queue it
         enqueueCompletion({ choreId, kidId: kidIdToUse });
+        ok = true;
+      }
+
+      if (!ok) {
+        setError("Kon klus niet voltooien");
+        return;
       }
 
       // Update local state
@@ -157,6 +162,9 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         levelUp,
         newLevel: levelUp ? newLevel : undefined,
       });
+
+      // Play a cheerful sound effect (no assets)
+      try { playSuccessSound(levelUp); } catch {}
 
       // Refresh data after a short delay
       setTimeout(() => {
@@ -190,16 +198,27 @@ export default function KidDashboard({ kidId, kidName }: Props) {
       levelUp: xpEarned > 0,
     });
 
-    // Close game rewards after a delay
-    setTimeout(() => {
-      setShowGameRewards(false);
-    }, 2000);
+    // Also try to unlock a luxury mapped to this game
+    fetch(`/api/games/${gameId}/win`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kidId }),
+    })
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data?.granted?.luxury?.title) {
+          setLuxuryUnlocked(data.granted.luxury.title as string);
+          setTimeout(() => setLuxuryUnlocked(null), 6000);
+        }
+      })
+      .catch(() => {});
   };
 
   if (loading) {
     return (
       <div className="text-center py-12">
-        <div className="text-2xl mb-4">🔄</div>
+        <div className="text-2xl mb-4">⏳</div>
         <p>Laden...</p>
       </div>
     );
@@ -224,6 +243,11 @@ export default function KidDashboard({ kidId, kidName }: Props) {
 
   return (
     <div className="space-y-6">
+      {luxuryUnlocked && (
+        <div className="alert alert-success">
+          🎉 Nieuwe luxe ontgrendeld: <strong>{luxuryUnlocked}</strong>
+        </div>
+      )}
       <KidEarningsSummary coins={stats.coins} xp={stats.xp} kidName={kidName} />
       {/* Header with kid info */}
       <header className="text-center space-y-4">
@@ -233,8 +257,8 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         <p className="text-muted">Je voortgang en vandaag's klussen</p>
       </header>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* At-a-glance stats */}
+      <div className="grid grid-cols-3 gap-4">
         <div className="card text-center p-6">
           <div className="text-3xl mb-2">⭐</div>
           <div className="text-2xl font-bold text-primary">{stats.level}</div>
@@ -242,13 +266,13 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         </div>
         
         <div className="card text-center p-6">
-          <div className="text-3xl mb-2">⭐</div>
+          <div className="text-3xl mb-2">⚡</div>
           <div className="text-2xl font-bold text-primary">{stats.xp}</div>
           <div className="text-muted">Totaal XP</div>
         </div>
         
         <div className="card text-center p-6">
-          <div className="text-3xl mb-2">💰</div>
+          <div className="text-3xl mb-2">🪙</div>
           <div className="text-2xl font-bold text-warn">{stats.coins}</div>
           <div className="text-muted">Munten</div>
         </div>
@@ -315,15 +339,46 @@ export default function KidDashboard({ kidId, kidName }: Props) {
         newLevel={celebration.newLevel}
       />
 
-      {/* Game Rewards Component */}
+      {/* Game Rewards Overlay */}
       {showGameRewards && (
-        <GameRewards
-          kidId={kidId}
-          kidXp={stats.xp}
-          kidCoins={stats.coins}
-          onRewardUnlock={handleGameRewardUnlock}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+            <GameRewards
+              kidId={kidId}
+              kidXp={stats.xp}
+              kidCoins={stats.coins}
+              onRewardUnlock={handleGameRewardUnlock}
+              onClose={() => setShowGameRewards(false)}
+            />
+          </div>
+        </div>
       )}
     </div>
   );
-} 
+}
+
+// Tiny celebratory sound using Web Audio API
+function playSuccessSound(levelUp: boolean) {
+  const AC: any = (window as any).AudioContext || (window as any).webkitAudioContext;
+  if (!AC) return;
+  const ctx = new AC();
+  const now = ctx.currentTime;
+  const notes = levelUp ? [523.25, 659.25, 783.99] : [523.25, 659.25]; // C5, E5, G5
+  const dur = 0.16;
+  notes.forEach((f, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.value = f;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    const start = now + i * (dur * 0.6);
+    const end = start + dur;
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.25, start + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, end);
+    osc.start(start);
+    osc.stop(end + 0.03);
+  });
+}
+

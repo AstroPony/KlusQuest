@@ -27,9 +27,10 @@ type Props = {
   onEdit?: (chore: Chore) => void;
   onDelete?: (choreId: string) => void;
   showActions?: boolean;
+  currentKidId?: string; // Add current kid ID for unassigned chores
 };
 
-export default function ChoreList({ chores, onComplete, onEdit, onDelete, showActions }: Props) {
+export default function ChoreList({ chores, onComplete, onEdit, onDelete, showActions, currentKidId }: Props) {
   const todayChores = chores.filter(chore => 
     chore.frequency === "DAILY" || 
     (chore.frequency === "WEEKLY" && new Date().getDay() === 1) // Monday
@@ -78,9 +79,9 @@ export default function ChoreList({ chores, onComplete, onEdit, onDelete, showAc
             <div className="flex items-center gap-2">
               {!chore.completed ? (
                 <button
-                  onClick={() => onComplete(chore.id, chore.kid?.id || "")}
+                  onClick={() => onComplete(chore.id, chore.kid?.id || currentKidId || "")}
                   className="btn-primary px-4 py-2"
-                  disabled={!chore.kid}
+                  disabled={!chore.kid && !currentKidId}
                 >
                   Klaar!
                 </button>

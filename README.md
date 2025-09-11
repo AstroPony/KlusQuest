@@ -24,7 +24,7 @@ Gamified chores & allowance tracker for Dutch families.
 
 ## Features
 
-- **Kid View**: Interactive PixiJS board for gamified chore completion
+**Kid View**: Simple dashboard for chores, progress and rewards
 - **Parent Dashboard**: Manage kids, chores, and rewards
 - **Bilingual**: Dutch + English support
 - **Modern Stack**: Next.js 14, TypeScript, Tailwind CSS, Prisma
@@ -35,16 +35,16 @@ Gamified chores & allowance tracker for Dutch families.
 /app
   /(public)          # Public routes
   /dashboard         # Parent dashboard
-  /kid              # Kid view with PixiJS
+  /kid-simple       # Simple kid dashboard
   /api              # API routes
 /components
   /ui               # Reusable UI components
-  /pixi             # PixiJS game components
+  
 /lib
   /auth             # Authentication logic
   /db               # Database utilities
   /i18n             # Internationalization
-  /pixi             # Game logic models
+  
 /prisma             # Database schema
 ```
 
@@ -73,9 +73,9 @@ Gamified chores & allowance tracker for Dutch families.
 
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript
 - **Styling**: Tailwind CSS with custom design tokens
-- **Game Engine**: PixiJS 7+ for interactive elements
+ 
 - **Database**: Prisma with SQLite (dev) / Supabase/MySQL (prod)
-- **Authentication**: Clerk or Auth.js (to be implemented)
+- **Authentication**: Clerk (integrated)
 - **Payments**: Stripe (to be implemented)
 
 ## Environment Variables
@@ -105,6 +105,6 @@ NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en
 
 1. Implement authentication (Clerk/Auth.js)
 2. Add chore management CRUD operations
-3. Integrate real game mechanics with PixiJS
+3. Enhance kid experience with simple mini-games (optional)
 4. Add Stripe subscription handling
 5. Implement i18n with next-intl 

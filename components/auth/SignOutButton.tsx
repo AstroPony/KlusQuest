@@ -2,12 +2,17 @@
 
 import { SignOutButton as ClerkSignOutButton } from "@clerk/nextjs";
 
-export default function SignOutButton() {
+type Props = {
+  className?: string;
+  children?: React.ReactNode;
+};
+
+export default function SignOutButton({ className, children }: Props) {
   return (
     <ClerkSignOutButton>
-      <button className="btn-ghost text-sm">
-        Uitloggen
+      <button className={className ?? "btn-ghost text-sm"}>
+        {children ?? "Uitloggen"}
       </button>
     </ClerkSignOutButton>
   );
-} 
+}

@@ -14,151 +14,203 @@ datasource db {
 // ClaimStatus: "PENDING" | "APPROVED" | "DENIED"
 
 model User {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  clerkId   String    @unique
-  email     String    @unique
-  role      String    @default("PARENT")
+  clerkId String @unique
+  email   String @unique
+  role    String @default("PARENT")
 
   household Household?
 }
 
 model Household {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  ownerId   String    @unique
-  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId String @unique
+  owner   User   @relation(fields: [ownerId], references: [id])
 
-  name      String    @default("Mijn gezin")
-  locale    String    @default("nl")
-  tokenRateCents Int  @default(0)
+  name           String @default("Mijn gezin")
+  locale         String @default("nl")
+  tokenRateCents Int    @default(0)
 
-  kids      Kid[]
-  rewards   Reward[]
-  chores    Chore[]
+  kids     Kid[]
+  rewards  Reward[]
+  luxuries Luxury[]
+  chores   Chore[]
 }
 
 model Kid {
-  id          String        @id @default(cuid())
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   householdId String
-  household   Household     @relation(fields: [householdId], references: [id])
+  household   Household @relation(fields: [householdId], references: [id])
 
   displayName String
   avatar      String?
   pinHash     String?
 
-  level       Int           @default(1)
-  xp          Int           @default(0)
-  coins       Int           @default(0)
+  level       Int     @default(1)
+  xp          Int     @default(0)
+  coins       Int     @default(0)
   bankAccount String?
 
-  chores      Chore[]
-  completions Completion[]
-  claims      Claim[]
-  ledger      Transaction[]
-  payouts     PaymentRequest[]
+  chores       Chore[]
+  completions  Completion[]
+  claims       Claim[]
+  ledger       Transaction[]
+  payouts      PaymentRequest[]
+  luxuries     Luxury[]
+  luxuryGrants LuxuryGrant[]
+  gameScores   GameScore[]
 }
 
 model Chore {
-  id          String     @id @default(cuid())
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   householdId String
-  household   Household  @relation(fields: [householdId], references: [id])
+  household   Household @relation(fields: [householdId], references: [id])
 
-  kidId       String?
-  kid         Kid?       @relation(fields: [kidId], references: [id])
+  kidId String?
+  kid   Kid?    @relation(fields: [kidId], references: [id])
 
   title       String
   description String?
   frequency   String
 
-  nextDueAt   DateTime?
-  active      Boolean    @default(true)
+  nextDueAt DateTime?
+  active    Boolean   @default(true)
 
-  baseXp      Int        @default(10)
-  baseCoins   Int        @default(1)
+  baseXp    Int @default(10)
+  baseCoins Int @default(1)
 
   completions Completion[]
 }
 
 model Completion {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  choreId      String
-  chore        Chore    @relation(fields: [choreId], references: [id])
+  choreId String
+  chore   Chore  @relation(fields: [choreId], references: [id])
 
-  kidId        String
-  kid          Kid      @relation(fields: [kidId], references: [id])
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
 
-  approved     Boolean  @default(true)
-  xpEarned     Int      @default(10)
-  coinsEarned  Int      @default(1)
+  approved    Boolean @default(true)
+  xpEarned    Int     @default(10)
+  coinsEarned Int     @default(1)
 }
 
 model Reward {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   householdId String
-  household   Household   @relation(fields: [householdId], references: [id])
+  household   Household @relation(fields: [householdId], references: [id])
 
-  title       String
-  type        String      @default("ITEM")
-  costCoins   Int
-  active      Boolean     @default(true)
+  title     String
+  type      String  @default("ITEM")
+  costCoins Int
+  active    Boolean @default(true)
 
-  claims      Claim[]
+  claims Claim[]
 }
 
 model Claim {
-  id          String      @id @default(cuid())
-  createdAt   DateTime    @default(now())
-  resolvedAt  DateTime?
+  id         String    @id @default(cuid())
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
 
-  rewardId    String
-  reward      Reward      @relation(fields: [rewardId], references: [id])
+  rewardId String
+  reward   Reward @relation(fields: [rewardId], references: [id])
 
-  kidId       String
-  kid         Kid         @relation(fields: [kidId], references: [id])
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
 
-  status      String      @default("PENDING")
-  coinsSpent  Int         @default(0)
+  status     String @default("PENDING")
+  coinsSpent Int    @default(0)
 }
 
 model Transaction {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  kidId      String
-  kid        Kid      @relation(fields: [kidId], references: [id])
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
 
-  amount     Int
-  reason     String
+  amount Int
+  reason String
+}
+
+// Luxuries are parent-approved perks that unlock when a kid wins a game.
+model Luxury {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  householdId String
+  household   Household @relation(fields: [householdId], references: [id])
+
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
+
+  title        String
+  type         String  @default("ITEM") // TIME | ITEM | PRIVILEGE
+  minutes      Int?
+  rank         Int     @default(1) // 1..4 ranking within kid preferences
+  assignedGame String  @default("memory-match") // reaction|memory|math|mole etc
+  active       Boolean @default(true)
+
+  grants LuxuryGrant[]
+}
+
+model LuxuryGrant {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  luxuryId String
+  luxury   Luxury @relation(fields: [luxuryId], references: [id])
+
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
+
+  status String @default("GRANTED") // GRANTED | CONSUMED | CANCELLED
 }
 
 model PaymentRequest {
-  id           String   @id @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  kidId        String
-  kid          Kid      @relation(fields: [kidId], references: [id])
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
 
-  coins        Int
-  amountCents  Int
-  status       String   @default("REQUESTED") // REQUESTED | CONFIRMED | CANCELLED
-  requestedAt  DateTime @default(now())
-  confirmedAt  DateTime?
-  link         String?
+  coins       Int
+  amountCents Int
+  status      String    @default("REQUESTED") // REQUESTED | CONFIRMED | CANCELLED
+  requestedAt DateTime  @default(now())
+  confirmedAt DateTime?
+  link        String?
+}
+
+// Per-kid game attempts and scores
+model GameScore {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  kidId String
+  kid   Kid    @relation(fields: [kidId], references: [id])
+
+  gameId          String // e.g., "memory-match", "color-sort"
+  score           Int
+  durationSeconds Int?
 }

@@ -1,4 +1,4 @@
-# KlusQuest Documentation Overview
+﻿# KlusQuest Documentation Overview
 
 ## Purpose & Scope
 - App: Gamified chores and allowance tracker for Dutch families.
@@ -8,7 +8,7 @@
 ## Getting Started
 - Install: `pnpm install`
 - DB: `pnpm prisma:generate` then `pnpm prisma:migrate --name init`
-- Run: `pnpm dev` → open `http://localhost:3000`
+- Run: `pnpm dev` â†’ open `http://localhost:3000`
 - Env: see `README.md` and `how-to-run.md` for required vars.
 
 ## Project Status
@@ -30,11 +30,14 @@
 - Package manager: Standardized docs to pnpm across guides and tests.
 - Encoding: Removed mojibake characters from Markdown files.
 - Duplication: QUICK-START overlaps with testing docs; consider consolidating.
-- Auth path: Clerk chosen; references to Auth.js remain as optional—keep consistent.
+- Auth path: Clerk chosen; references to Auth.js remain as optionalâ€”keep consistent.
 
 ## Next Documentation Improvements
 - Consolidate QUICK-START with `how-to-run.md` to reduce redundancy.
-- Add a short “Commands Reference” section in `README.md` for pnpm tasks.
+- Add a short â€œCommands Referenceâ€ section in `README.md` for pnpm tasks.
 - Ensure one canonical seed command (e.g., `pnpm exec tsx prisma/seed.ts`).
-- Add links between docs (status → quick start → testing) for discovery.
+- Add links between docs (status â†’ quick start â†’ testing) for discovery.
+
+
+
 

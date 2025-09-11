@@ -1,24 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
+import { choreUpdateSchema } from "@/lib/schemas";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
+import { z } from "zod";
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `chores:[id]:PUT:${ip}`, limit: 30, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const idCheck = z.object({ id: z.string().min(1) }).safeParse(params);
+    if (!idCheck.success) {
+      return NextResponse.json({ error: "Invalid id" }, { status: 400 });
+    }
+
     const body = await request.json();
-    const { title, description, frequency, kidId, baseXp, baseCoins, active } = body;
+    const parsed = choreUpdateSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid request", details: parsed.error.flatten() }, { status: 400 });
+    }
+    const { title, description, frequency, kidId, baseXp, baseCoins, active } = parsed.data;
 
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -29,7 +57,18 @@ export async function PUT(
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
     }
 
@@ -54,13 +93,13 @@ export async function PUT(
         householdId: user.household.id // Ensure chore belongs to user's household
       },
       data: {
-        title,
-        description,
-        frequency,
-        kidId: kidId || null,
-        baseXp,
-        baseCoins,
-        active
+        ...(title !== undefined ? { title } : {}),
+        ...(description !== undefined ? { description } : {}),
+        ...(frequency !== undefined ? { frequency } : {}),
+        ...(kidId !== undefined ? { kidId: kidId } : {}),
+        ...(baseXp !== undefined ? { baseXp } : {}),
+        ...(baseCoins !== undefined ? { baseCoins } : {}),
+        ...(active !== undefined ? { active } : {}),
       },
       include: {
         kid: {
@@ -88,6 +127,11 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `chores:[id]:DELETE:${ip}`, limit: 20, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -96,7 +140,18 @@ export async function DELETE(
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -107,7 +162,18 @@ export async function DELETE(
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
     }
 

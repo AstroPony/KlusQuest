@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
     const kid = await prisma.kid.create({
       data: {
         displayName: displayName,
-        avatar: avatar || "🙂",
+        avatar: avatar || "🧒",
         householdId: user.household.id,
         level: 1,
         xp: 0,

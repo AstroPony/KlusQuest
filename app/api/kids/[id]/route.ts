@@ -32,7 +32,18 @@ export async function PUT(
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -43,7 +54,18 @@ export async function PUT(
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
     }
 
@@ -119,7 +141,18 @@ export async function DELETE(
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -130,7 +163,18 @@ export async function DELETE(
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
     }
 

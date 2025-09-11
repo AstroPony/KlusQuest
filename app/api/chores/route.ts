@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
+import { z } from "zod";
+import { choreCreateSchema } from "@/lib/schemas";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `chores:GET:${ip}`, limit: 60, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -12,7 +20,18 @@ export async function GET(request: NextRequest) {
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     console.log("User found:", user?.id, "Clerk ID:", userId, "Household:", user?.household?.id);
@@ -25,7 +44,18 @@ export async function GET(request: NextRequest) {
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
       console.log("Created new user:", user.id);
     }
@@ -97,25 +127,41 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers);
+    const rl = rateLimit({ key: `chores:POST:${ip}`, limit: 20, windowMs: 60_000 });
+    if (!rl.ok) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { title, description, frequency, kidId, baseXp, baseCoins } = body;
-
-    if (!title || !frequency) {
+    const json = await request.json();
+    const parsed = choreCreateSchema.safeParse(json);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Title and frequency are required" },
+        { error: "Invalid request", details: parsed.error.flatten() },
         { status: 400 }
       );
     }
+    const { title, description, frequency, kidId, baseXp, baseCoins } = parsed.data;
 
     // Get or create user
     let user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { household: true }
+      include: {
+        household: {
+          select: {
+            id: true,
+            createdAt: true,
+            updatedAt: true,
+            ownerId: true,
+            name: true,
+            locale: true,
+          }
+        }
+      }
     });
 
     console.log("POST - User found:", user?.id, "Clerk ID:", userId, "Household:", user?.household?.id);
@@ -128,7 +174,18 @@ export async function POST(request: NextRequest) {
           email: "user@example.com", // We'll get this from Clerk later
           role: "PARENT"
         },
-        include: { household: true }
+        include: {
+          household: {
+            select: {
+              id: true,
+              createdAt: true,
+              updatedAt: true,
+              ownerId: true,
+              name: true,
+              locale: true,
+            }
+          }
+        }
       });
       console.log("POST - Created new user:", user.id);
     }
@@ -182,8 +239,8 @@ export async function POST(request: NextRequest) {
         description,
         frequency,
         kidId: kidId || null,
-        baseXp: baseXp || 10,
-        baseCoins: baseCoins || 1,
+        baseXp: baseXp ?? 10,
+        baseCoins: baseCoins ?? 1,
         householdId: householdId,
         nextDueAt: new Date()
       },

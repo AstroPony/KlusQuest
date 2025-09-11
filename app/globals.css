@@ -12,6 +12,18 @@
   --danger: #ef4444;
   --text: #e2e8f0;
   --muted: #94a3b8;
+  
+  /* Clerk-specific variables for better contrast */
+  --clerk-primary: #22c55e;
+  --clerk-primary-text: #052e16;
+  --clerk-background: #0f172a;
+  --clerk-card: #1e293b;
+  --clerk-text: #e2e8f0;
+  --clerk-muted: #94a3b8;
+  --clerk-border: #334155;
+  --clerk-input: #1e293b;
+  --clerk-input-text: #e2e8f0;
+  --clerk-input-placeholder: #64748b;
 }
 
 html, body, #__next {
@@ -54,6 +66,9 @@ html, body, #__next {
   .alert-error {
     @apply bg-red-500/10 border-red-500/30 text-red-500;
   }
+  .alert-success {
+    @apply bg-green-500/10 border-green-500/30 text-green-500;
+  }
   .text-primary {
     @apply text-green-500;
   }
@@ -71,5 +86,79 @@ html, body, #__next {
   }
   .text-muted {
     @apply text-slate-400;
+  }
+  
+  /* Clerk authentication page styling */
+  [data-clerk-root] {
+    background: var(--clerk-background) !important;
+    color: var(--clerk-text) !important;
+  }
+  
+  [data-clerk-root] .cl-formButtonPrimary {
+    background: var(--clerk-primary) !important;
+    color: var(--clerk-primary-text) !important;
+    border: none !important;
+    border-radius: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+    font-weight: 500 !important;
+  }
+  
+  [data-clerk-root] .cl-formButtonPrimary:hover {
+    opacity: 0.9 !important;
+  }
+  
+  [data-clerk-root] .cl-formButtonSecondary {
+    background: transparent !important;
+    color: var(--clerk-text) !important;
+    border: 1px solid var(--clerk-border) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  [data-clerk-root] .cl-formButtonSecondary:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  [data-clerk-root] .cl-formFieldInput {
+    background: var(--clerk-input) !important;
+    color: var(--clerk-input-text) !important;
+    border: 1px solid var(--clerk-border) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.5rem 1rem !important;
+  }
+  
+  [data-clerk-root] .cl-formFieldInput::placeholder {
+    color: var(--clerk-input-placeholder) !important;
+  }
+  
+  [data-clerk-root] .cl-formFieldInput:focus {
+    border-color: var(--clerk-primary) !important;
+    outline: none !important;
+  }
+  
+  [data-clerk-root] .cl-card {
+    background: var(--clerk-card) !important;
+    border: 1px solid var(--clerk-border) !important;
+    border-radius: 1rem !important;
+  }
+  
+  [data-clerk-root] .cl-headerTitle {
+    color: var(--clerk-text) !important;
+  }
+  
+  [data-clerk-root] .cl-headerSubtitle {
+    color: var(--clerk-muted) !important;
+  }
+  
+  [data-clerk-root] .cl-formFieldLabel {
+    color: var(--clerk-text) !important;
+  }
+  
+  [data-clerk-root] .cl-footerAction {
+    color: var(--clerk-muted) !important;
+  }
+  
+  [data-clerk-root] .cl-footerAction a {
+    color: var(--clerk-primary) !important;
   }
 } 

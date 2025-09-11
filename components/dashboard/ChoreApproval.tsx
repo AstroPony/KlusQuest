@@ -95,7 +95,7 @@ export default function ChoreApproval({ completions, onApprove, onDeny }: ChoreA
           </h3>
           <div className="space-y-3">
             {approvedCompletions.slice(0, 5).map((completion) => (
-              <div key={completion.id} className="card p-4 border-l-4 border-green-500 bg-green-50/50">
+              <div key={completion.id} className="card p-4 border-l-4 border-green-500 bg-green-50 dark:bg-green-900/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div className="text-2xl">{completion.kidAvatar || "👶"}</div>

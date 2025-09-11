@@ -8,6 +8,7 @@ import KidForm from "@/components/dashboard/KidForm";
 import KidList from "@/components/dashboard/KidList";
 import HouseholdOverview from "@/components/dashboard/HouseholdOverview";
 import ChoreApproval from "@/components/dashboard/ChoreApproval";
+import KidLuxuries from "@/components/dashboard/KidLuxuries";
 
 interface Kid {
   id: string;
@@ -50,7 +51,7 @@ export default function Dashboard() {
     completedToday: 0,
     totalXP: 0,
     totalCoins: 0,
-    completionRate: 0
+    completionRate: 0,
   });
   const [completions, setCompletions] = useState<ChoreCompletion[]>([]);
   const [showKidForm, setShowKidForm] = useState(false);
@@ -60,7 +61,6 @@ export default function Dashboard() {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  // Fetch data on component mount
   useEffect(() => {
     if (isLoaded && user) {
       fetchData();
@@ -71,28 +71,17 @@ export default function Dashboard() {
     try {
       setLoading(true);
       const [kidsRes, statsRes, completionsRes] = await Promise.all([
-        fetch('/api/kids'),
-        fetch('/api/household/stats'),
-        fetch('/api/household/completions')
+        fetch("/api/kids"),
+        fetch("/api/household/stats"),
+        fetch("/api/household/completions"),
       ]);
 
-      if (kidsRes.ok) {
-        const kidsData = await kidsRes.json();
-        setKids(kidsData);
-      }
-
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData);
-      }
-
-      if (completionsRes.ok) {
-        const completionsData = await completionsRes.json();
-        setCompletions(completionsData);
-      }
+      if (kidsRes.ok) setKids(await kidsRes.json());
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (completionsRes.ok) setCompletions(await completionsRes.json());
     } catch (err) {
-      setError('Fout bij het ophalen van gegevens');
-      console.error('Error fetching data:', err);
+      setError("Fout bij het ophalen van gegevens");
+      console.error("Error fetching data:", err);
     } finally {
       setLoading(false);
     }
@@ -100,80 +89,68 @@ export default function Dashboard() {
 
   const handleCreateKid = async (data: { displayName: string; avatar?: string }) => {
     try {
-      const response = await fetch('/api/kids', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      const response = await fetch("/api/kids", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         const newKid = await response.json();
-        setKids(prev => [...prev, newKid]);
+        setKids((prev) => [...prev, newKid]);
         setShowKidForm(false);
-        fetchData(); // Refresh stats
+        fetchData();
       } else {
-        setError('Fout bij het aanmaken van kind');
+        setError("Fout bij het aanmaken van kind");
       }
     } catch (err) {
-      setError('Fout bij het aanmaken van kind');
-      console.error('Error creating kid:', err);
+      setError("Fout bij het aanmaken van kind");
+      console.error("Error creating kid:", err);
     }
   };
 
   const handleUpdateKid = async (data: { displayName: string; avatar?: string }) => {
     if (!editingKid) return;
-
     try {
       const response = await fetch(`/api/kids/${editingKid.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
-
       if (response.ok) {
         const updatedKid = await response.json();
-        setKids(prev => prev.map(k => k.id === editingKid.id ? updatedKid : k));
+        setKids((prev) => prev.map((k) => (k.id === editingKid.id ? updatedKid : k)));
         setEditingKid(null);
-        fetchData(); // Refresh stats
+        fetchData();
       } else {
-        setError('Fout bij het bijwerken van kind');
+        setError("Fout bij het bijwerken van kind");
       }
     } catch (err) {
-      setError('Fout bij het bijwerken van kind');
-      console.error('Error updating kid:', err);
+      setError("Fout bij het bijwerken van kind");
+      console.error("Error updating kid:", err);
     }
   };
 
   const handleDeleteKid = async (kidId: string) => {
-    if (!confirm('Weet je zeker dat je dit kind wilt verwijderen?')) return;
-
+    if (!confirm("Weet je zeker dat je dit kind wilt verwijderen?")) return;
     try {
-      const response = await fetch(`/api/kids/${kidId}`, {
-        method: 'DELETE'
-      });
-
+      const response = await fetch(`/api/kids/${kidId}`, { method: "DELETE" });
       if (response.ok) {
-        setKids(prev => prev.filter(k => k.id !== kidId));
-        fetchData(); // Refresh stats
+        setKids((prev) => prev.filter((k) => k.id !== kidId));
+        fetchData();
       } else {
-        setError('Fout bij het verwijderen van kind');
+        setError("Fout bij het verwijderen van kind");
       }
     } catch (err) {
-      setError('Fout bij het verwijderen van kind');
-      console.error('Error deleting kid:', err);
+      setError("Fout bij het verwijderen van kind");
+      console.error("Error deleting kid:", err);
     }
   };
 
   const handleGenerateInvite = async (kidId: string) => {
     try {
-      const response = await fetch(`/api/kids/${kidId}/invite`, {
-        method: "POST"
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate invite link");
-      }
-
+      const response = await fetch(`/api/kids/${kidId}/invite`, { method: "POST" });
+      if (!response.ok) throw new Error("Failed to generate invite link");
       const data = await response.json();
       setInviteLink(data.inviteUrl);
       setShowInviteModal(true);
@@ -186,44 +163,38 @@ export default function Dashboard() {
   const handleApproveCompletion = async (completionId: string) => {
     try {
       const response = await fetch(`/api/household/completions/${completionId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approved: true })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approved: true }),
       });
-
       if (response.ok) {
-        setCompletions(prev => 
-          prev.map(c => c.id === completionId ? { ...c, approved: true } : c)
-        );
-        fetchData(); // Refresh stats
+        setCompletions((prev) => prev.map((c) => (c.id === completionId ? { ...c, approved: true } : c)));
+        fetchData();
       } else {
-        setError('Fout bij het goedkeuren van klus');
+        setError("Fout bij het goedkeuren van klus");
       }
     } catch (err) {
-      setError('Fout bij het goedkeuren van klus');
-      console.error('Error approving completion:', err);
+      setError("Fout bij het goedkeuren van klus");
+      console.error("Error approving completion:", err);
     }
   };
 
   const handleDenyCompletion = async (completionId: string) => {
     try {
       const response = await fetch(`/api/household/completions/${completionId}/approve`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ approved: false })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approved: false }),
       });
-
       if (response.ok) {
-        setCompletions(prev => 
-          prev.map(c => c.id === completionId ? { ...c, approved: false } : c)
-        );
-        fetchData(); // Refresh stats
+        setCompletions((prev) => prev.map((c) => (c.id === completionId ? { ...c, approved: false } : c)));
+        fetchData();
       } else {
-        setError('Fout bij het afwijzen van klus');
+        setError("Fout bij het afwijzen van klus");
       }
     } catch (err) {
-      setError('Fout bij het afwijzen van klus');
-      console.error('Error denying completion:', err);
+      setError("Fout bij het afwijzen van klus");
+      console.error("Error denying completion:", err);
     }
   };
 
@@ -246,17 +217,11 @@ export default function Dashboard() {
             <SignOutButton />
           </div>
         </div>
-        
+
         <div className="flex gap-3">
-          <a href="/" className="btn-ghost">
-            🏠 Terug naar Home
-          </a>
-          <a href="/chores" className="btn-secondary">
-            📋 Klussen Beheren
-          </a>
-          <a href="/kid-simple" className="btn-secondary">
-            👶 Kid View Testen
-          </a>
+          <a href="/" className="btn-ghost">🏠 Terug naar Home</a>
+          <a href="/chores" className="btn-secondary">🧹 Klussen Beheren</a>
+          <a href="/kid-simple" className="btn-secondary">🧒 Kid View Testen</a>
         </div>
       </header>
 
@@ -264,7 +229,7 @@ export default function Dashboard() {
       {error && (
         <div className="alert alert-error">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="btn-sm btn-ghost">✕</button>
+          <button onClick={() => setError(null)} className="btn-sm btn-ghost">✖</button>
         </div>
       )}
 
@@ -285,19 +250,11 @@ export default function Dashboard() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-semibold">Kinderen Beheren</h2>
-          <button 
-            onClick={() => setShowKidForm(true)}
-            className="btn-primary"
-          >
-            👶 Kind Toevoegen
-          </button>
+          <button onClick={() => setShowKidForm(true)} className="btn-primary">➕ Kind Toevoegen</button>
         </div>
 
         {showKidForm && (
-          <KidForm
-            onSubmit={handleCreateKid}
-            onCancel={() => setShowKidForm(false)}
-          />
+          <KidForm onSubmit={handleCreateKid} onCancel={() => setShowKidForm(false)} />
         )}
 
         {editingKid && (
@@ -327,27 +284,26 @@ export default function Dashboard() {
         />
       </section>
 
+      {/* Luxuries after Games */}
+      <KidLuxuries />
+
       {/* Quick Actions */}
       <section>
         <h2 className="text-2xl font-semibold mb-4">Snelle Acties</h2>
         <div className="grid md:grid-cols-3 gap-4">
           <a href="/chores" className="card p-6 text-center hover:bg-accent/5 transition-colors">
-            <div className="text-3xl mb-2">📝</div>
+            <div className="text-3xl mb-2">🧹</div>
             <h3 className="font-semibold">Klussen Beheren</h3>
             <p className="text-sm text-muted">Voeg klussen toe en wijs ze toe</p>
           </a>
-          
+
           <a href="/kid-simple" className="card p-6 text-center hover:bg-accent/5 transition-colors">
-            <div className="text-3xl mb-2">👶</div>
+            <div className="text-3xl mb-2">🧒</div>
             <h3 className="font-semibold">Kid View Testen</h3>
             <p className="text-sm text-muted">Bekijk hoe je kinderen de app zien</p>
           </a>
+
           
-          <a href="/kid" className="card p-6 text-center hover:bg-accent/5 transition-colors">
-            <div className="text-3xl mb-2">🎮</div>
-            <h3 className="font-semibold">PixiJS Game Demo</h3>
-            <p className="text-sm text-muted">Test de game functionaliteit</p>
-          </a>
         </div>
       </section>
 
@@ -355,15 +311,15 @@ export default function Dashboard() {
       {showInviteModal && inviteLink && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-semibold mb-4">🔗 Uitnodigingslink gegenereerd</h3>
+            <h3 className="text-xl font-semibold mb-4">✉️ Uitnodigingslink gegenereerd</h3>
             <p className="text-sm text-muted mb-4">
               Deel deze link met je kind om toegang te geven tot de app zonder login.
             </p>
-            
+
             <div className="bg-gray-100 p-3 rounded mb-4 break-all">
               <code className="text-sm">{inviteLink}</code>
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 onClick={() => {
@@ -374,10 +330,7 @@ export default function Dashboard() {
               >
                 📋 Kopieer Link
               </button>
-              <button
-                onClick={() => setShowInviteModal(false)}
-                className="btn-secondary"
-              >
+              <button onClick={() => setShowInviteModal(false)} className="btn-secondary">
                 Sluiten
               </button>
             </div>
@@ -386,4 +339,4 @@ export default function Dashboard() {
       )}
     </main>
   );
-} 
+}

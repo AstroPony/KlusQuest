@@ -7,6 +7,7 @@ type Chore = {
   description?: string;
   frequency: string;
   kidId?: string;
+  kidIds?: string[]; // For multiple kids
   baseXp: number;
   baseCoins: number;
 };
@@ -27,7 +28,9 @@ export default function ChoreForm({ chore, kids, onSubmit, onCancel, isEditing =
     kidId: "",
     baseXp: 10,
     baseCoins: 1,
-    ...chore
+    ...chore,
+    // Initialize kidIds from existing chore if editing
+    kidIds: chore?.kidId ? [chore.kidId] : (chore?.kidIds || [])
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -57,12 +60,13 @@ export default function ChoreForm({ chore, kids, onSubmit, onCancel, isEditing =
     if (validateForm()) {
       onSubmit({
         ...formData,
-        kidId: formData.kidId || undefined
+        kidId: formData.kidId || undefined,
+        kidIds: formData.kidIds || []
       });
     }
   };
 
-  const handleChange = (field: keyof Chore, value: string | number) => {
+  const handleChange = (field: keyof Chore, value: string | number | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
@@ -125,22 +129,42 @@ export default function ChoreForm({ chore, kids, onSubmit, onCancel, isEditing =
         </div>
 
         <div>
-          <label htmlFor="kidId" className="block text-sm font-medium mb-2">
+          <label htmlFor="kidIds" className="block text-sm font-medium mb-2">
             Toewijzen aan (optioneel)
           </label>
-          <select
-            id="kidId"
-            value={formData.kidId}
-            onChange={(e) => handleChange("kidId", e.target.value)}
-            className="input w-full"
-          >
-            <option value="">Geen toewijzing</option>
+          <div className="space-y-2">
             {kids.map(kid => (
-              <option key={kid.id} value={kid.id}>
-                {kid.displayName}
-              </option>
+              <label key={kid.id} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.kidIds?.includes(kid.id) || false}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    const currentKidIds = formData.kidIds || [];
+                    let newKidIds: string[];
+                    
+                    if (isChecked) {
+                      newKidIds = [...currentKidIds, kid.id];
+                    } else {
+                      newKidIds = currentKidIds.filter(id => id !== kid.id);
+                    }
+                    
+                    handleChange("kidIds", newKidIds);
+                  }}
+                  className="rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span className="text-sm">{kid.displayName}</span>
+              </label>
             ))}
-          </select>
+            {kids.length === 0 && (
+              <p className="text-sm text-muted">Voeg eerst kinderen toe via het dashboard</p>
+            )}
+          </div>
+          {formData.kidIds && formData.kidIds.length > 0 && (
+            <p className="text-sm text-muted mt-1">
+              Deze klus wordt aangemaakt voor {formData.kidIds.length} kind(eren)
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">

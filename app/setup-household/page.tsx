@@ -38,6 +38,12 @@ export default function SetupHouseholdPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-bg via-card to-bg flex items-center justify-center p-6">
       <div className="w-full max-w-md">
+        <div className="mb-6 text-center">
+          <a href="/" className="btn-ghost">
+            🏠 Terug naar Home
+          </a>
+        </div>
+        
         {error && (
           <div className="mb-6 p-4 bg-danger/10 border border-danger/20 rounded-lg text-danger text-center">
             {error}
