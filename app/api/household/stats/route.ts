@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -21,9 +23,9 @@ export async function GET(request: NextRequest) {
             ownerId: true,
             name: true,
             locale: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
         data: {
           clerkId: userId,
           email: "user@example.com", // We'll get this from Clerk later
-          role: "PARENT"
+          role: "PARENT",
         },
         include: {
           household: {
@@ -43,9 +45,9 @@ export async function GET(request: NextRequest) {
               ownerId: true,
               name: true,
               locale: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
     }
 
@@ -55,59 +57,54 @@ export async function GET(request: NextRequest) {
         data: {
           name: "Mijn Gezin",
           locale: "nl",
-          ownerId: user.id
-        }
+          ownerId: user.id,
+        },
       });
-      
+
       // Update the user object for this request
       user.household = household;
     }
 
     // Get household statistics
-    const [
-      totalKids,
-      totalChores,
-      completedToday,
-      totalXP,
-      totalCoins
-    ] = await Promise.all([
-      // Count kids
-      prisma.kid.count({
-        where: { householdId: user.household.id }
-      }),
-      
-      // Count active chores
-      prisma.chore.count({
-        where: { 
-          householdId: user.household.id,
-          active: true
-        }
-      }),
-      
-      // Count completions today
-      prisma.completion.count({
-        where: {
-          chore: {
-            householdId: user.household.id
+    const [totalKids, totalChores, completedToday, totalXP, totalCoins] =
+      await Promise.all([
+        // Count kids
+        prisma.kid.count({
+          where: { householdId: user.household.id },
+        }),
+
+        // Count active chores
+        prisma.chore.count({
+          where: {
+            householdId: user.household.id,
+            active: true,
           },
-          createdAt: {
-            gte: new Date(new Date().setHours(0, 0, 0, 0)) // Today
-          }
-        }
-      }),
-      
-      // Sum total XP
-      prisma.kid.aggregate({
-        where: { householdId: user.household.id },
-        _sum: { xp: true }
-      }),
-      
-      // Sum total coins
-      prisma.kid.aggregate({
-        where: { householdId: user.household.id },
-        _sum: { coins: true }
-      })
-    ]);
+        }),
+
+        // Count completions today
+        prisma.completion.count({
+          where: {
+            chore: {
+              householdId: user.household.id,
+            },
+            createdAt: {
+              gte: new Date(new Date().setHours(0, 0, 0, 0)), // Today
+            },
+          },
+        }),
+
+        // Sum total XP
+        prisma.kid.aggregate({
+          where: { householdId: user.household.id },
+          _sum: { xp: true },
+        }),
+
+        // Sum total coins
+        prisma.kid.aggregate({
+          where: { householdId: user.household.id },
+          _sum: { coins: true },
+        }),
+      ]);
 
     // Calculate completion rate
     const completionRate = totalChores > 0 ? completedToday / totalChores : 0;
@@ -118,7 +115,7 @@ export async function GET(request: NextRequest) {
       completedToday,
       totalXP: totalXP._sum.xp || 0,
       totalCoins: totalCoins._sum.coins || 0,
-      completionRate
+      completionRate,
     };
 
     return NextResponse.json(stats);
@@ -126,7 +123,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching household stats:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}

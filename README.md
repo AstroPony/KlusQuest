@@ -84,7 +84,7 @@ Copy `.env.local.example` to `.env.local` and fill in:
 
 ```env
 DATABASE_PROVIDER=sqlite
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="file:./prisma/dev.db"
 NEXT_PUBLIC_DEFAULT_LOCALE=nl
 NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en
 ```
@@ -103,8 +103,8 @@ NEXT_PUBLIC_SUPPORTED_LOCALES=nl,en
 
 ## Next Steps
 
-1. Implement authentication (Clerk/Auth.js)
-2. Add chore management CRUD operations
-3. Enhance kid experience with simple mini-games (optional)
-4. Add Stripe subscription handling
-5. Implement i18n with next-intl 
+1. Configure environment secrets locally and in Vercel (`DATABASE_URL`, Clerk keys, `NEXT_PUBLIC_APP_URL`, Stripe when ready).
+2. Provision the production database (e.g. Supabase Postgres), run `pnpm prisma:migrate deploy`, and seed initial households.
+3. Run `pnpm build`, `pnpm lint`, and `pnpm test:e2e` to validate the release build.
+4. Update Clerk allowed origins and webhooks for the Vercel domain.
+5. Instrument monitoring/analytics (Sentry, Vercel Analytics) ahead of launch.

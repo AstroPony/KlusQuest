@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
@@ -21,9 +23,9 @@ export async function GET(request: NextRequest) {
             ownerId: true,
             name: true,
             locale: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
         data: {
           clerkId: userId,
           email: "user@example.com", // We'll get this from Clerk later
-          role: "PARENT"
+          role: "PARENT",
         },
         include: {
           household: {
@@ -43,9 +45,9 @@ export async function GET(request: NextRequest) {
               ownerId: true,
               name: true,
               locale: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
     }
 
@@ -55,10 +57,10 @@ export async function GET(request: NextRequest) {
         data: {
           name: "Mijn Gezin",
           locale: "nl",
-          ownerId: user.id
-        }
+          ownerId: user.id,
+        },
       });
-      
+
       // Update the user object for this request
       user.household = household;
     }
@@ -67,29 +69,29 @@ export async function GET(request: NextRequest) {
     const completions = await prisma.completion.findMany({
       where: {
         chore: {
-          householdId: user.household.id
-        }
+          householdId: user.household.id,
+        },
       },
       include: {
         chore: {
           select: {
             id: true,
-            title: true
-          }
+            title: true,
+          },
         },
         kid: {
           select: {
             id: true,
             displayName: true,
-            avatar: true
-          }
-        }
+            avatar: true,
+          },
+        },
       },
-      orderBy: { createdAt: "desc" }
+      orderBy: { createdAt: "desc" },
     });
 
     // Transform the data to match the frontend interface
-    const transformedCompletions = completions.map(completion => ({
+    const transformedCompletions = completions.map((completion) => ({
       id: completion.id,
       choreId: completion.choreId,
       choreTitle: completion.chore.title,
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest) {
       xpEarned: completion.xpEarned,
       coinsEarned: completion.coinsEarned,
       createdAt: completion.createdAt.toISOString(),
-      approved: completion.approved
+      approved: completion.approved,
     }));
 
     return NextResponse.json(transformedCompletions);
@@ -107,7 +109,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching completions:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}
