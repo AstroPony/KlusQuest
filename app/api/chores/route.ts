@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import { choreCreateSchema } from "@/lib/schemas";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+export const runtime = "edge";
+
 export const dynamic = "force-dynamic";
 
 
@@ -266,3 +268,4 @@ export async function POST(request: NextRequest) {
     );
   }
 } 
+
