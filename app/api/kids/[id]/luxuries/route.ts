@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+export const dynamic = "force-dynamic";
+
 
 const luxurySchema = z.object({
   title: z.string().trim().min(2).max(100),

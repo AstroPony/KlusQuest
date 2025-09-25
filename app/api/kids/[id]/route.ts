@@ -1,8 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+export const dynamic = "force-dynamic";
+
 
 export async function PUT(
   request: NextRequest,
@@ -100,7 +102,7 @@ export async function PUT(
       where: { id: params.id },
       data: {
         displayName: displayName,
-        avatar: avatar || "🙂"
+        avatar: avatar || "??"
       },
       select: {
         id: true,

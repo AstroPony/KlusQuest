@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
+export const dynamic = "force-dynamic";
+
 
 const postSchema = z.object({
   kidId: z.string().min(1),

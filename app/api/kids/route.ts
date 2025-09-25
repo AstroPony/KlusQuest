@@ -1,8 +1,10 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { z } from "zod";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+export const dynamic = "force-dynamic";
+
 
 export async function GET(request: NextRequest) {
   try {
@@ -154,7 +156,7 @@ export async function POST(request: NextRequest) {
     const kid = await prisma.kid.create({
       data: {
         displayName: displayName,
-        avatar: avatar || "🧒",
+        avatar: avatar || "??",
         householdId: user.household.id,
         level: 1,
         xp: 0,

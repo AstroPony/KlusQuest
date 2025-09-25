@@ -4,6 +4,8 @@ import { prisma } from "@/lib/db/prisma";
 import { choreUpdateSchema } from "@/lib/schemas";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 import { z } from "zod";
+export const dynamic = "force-dynamic";
+
 
 export async function PUT(
   request: NextRequest,
