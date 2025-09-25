@@ -1,0 +1,45 @@
+# Before PROD Checklist
+
+## Environment & Infrastructure
+- [ ] Purchase/attach production domain (e.g. app.yourdomain.com) and link to Vercel project
+- [ ] Create Clerk production instance with custom domain and generate production keys
+- [ ] Mirror env vars in Vercel production scope (DB URLs, Clerk keys, Supabase keys, monitoring)
+- [ ] Rotate any secrets that were shared in non-secure channels before go-live
+- [ ] Establish database backup/restore plan for Supabase
+
+## Database & Prisma
+- [ ] Baseline Postgres migration history (`prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script > prisma/migrations/0001_init/migration.sql`)
+- [ ] Run `pnpm exec prisma migrate deploy` against staging/production
+- [ ] Seed production with minimal demo data or migration script as required
+
+## Application Health
+- [ ] `pnpm lint`
+- [ ] `pnpm typecheck`
+- [ ] `pnpm test:e2e` (smoke critical journeys)
+- [ ] `pnpm build`
+- [ ] Manual QA: parent onboarding, kid invite, chore completion, reward approval
+
+## Monitoring & Analytics
+- [ ] Add Sentry (frontend/backend) or alternative error monitoring
+- [ ] Enable Vercel Analytics / Supabase logs for traffic insight
+- [ ] Define alert thresholds (Clerk auth failures, DB errors)
+
+## Security & Compliance
+- [ ] Update privacy policy & terms on marketing site
+- [ ] Verify data retention/PII handling for EU (GDPR checklist)
+- [ ] Confirm Clerk sign-in flows comply with email/domain policies
+
+## Operations
+- [ ] Create lightweight incident response doc + on-call contact
+- [ ] Document rollback procedure (redeploy previous commit, DB restore)
+- [ ] Prepare support contact email/inbox
+
+## Launch Comms
+- [ ] Draft release notes & onboarding email for beta testers
+- [ ] Plan feedback capture channel (Form, Notion, Linear, etc.)
+- [ ] Schedule announcement timeline & responsibilities
+
+## Post-Launch
+- [ ] Define success metrics & dashboards (Supabase analytics, product KPIs)
+- [ ] Schedule retro/check-in after first week of production usage
+- [ ] Capture backlog of Phase 2 improvements (notifications, premium, etc.)
