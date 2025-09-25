@@ -2,8 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+
 export const dynamic = "force-dynamic";
 
+export function GET() {
+  return NextResponse.json({ ok: true, message: "Use POST to complete a chore" });
+}
 
 export async function POST(
   request: NextRequest,
@@ -16,24 +20,22 @@ export async function POST(
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
     const { userId } = await auth();
-    
+
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const choreId = params.id;
 
-    // Find the chore
     const chore = await prisma.chore.findUnique({
       where: { id: choreId },
-      include: { kid: true }
+      include: { kid: true },
     });
 
     if (!chore) {
       return NextResponse.json({ error: "Chore not found" }, { status: 404 });
     }
 
-    // Check if user has access to this chore (through household)
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
       include: {
@@ -45,46 +47,48 @@ export async function POST(
             ownerId: true,
             name: true,
             locale: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     if (!user?.household || chore.kid?.householdId !== user.household.id) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
-    // Create completion record
+    if (!chore.kidId) {
+      return NextResponse.json({ error: "Chore is not assigned to a kid" }, { status: 400 });
+    }
+
     const completion = await prisma.completion.create({
       data: {
-        choreId: choreId,
-        kidId: chore.kidId!,
-        approved: false, // Parent needs to approve
+        choreId,
+        kidId: chore.kidId,
+        approved: false,
         xpEarned: chore.baseXp,
         coinsEarned: chore.baseCoins,
-      }
+      },
     });
 
-    // Update kid's XP and coins
     await prisma.kid.update({
-      where: { id: chore.kidId! },
+      where: { id: chore.kidId },
       data: {
         xp: { increment: chore.baseXp },
-        coins: { increment: chore.baseCoins }
-      }
+        coins: { increment: chore.baseCoins },
+      },
     });
 
     return NextResponse.json({
       success: true,
       completion,
-      message: "Chore completed successfully! Waiting for parent approval."
+      message: "Chore completed successfully! Waiting for parent approval.",
     });
-
   } catch (error) {
     console.error("Error completing chore:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
-} 
+}
+

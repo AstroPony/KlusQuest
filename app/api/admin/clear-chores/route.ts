@@ -4,6 +4,10 @@ import { prisma } from "@/lib/db/prisma";
 
 export const dynamic = "force-dynamic";
 
+export function GET() {
+  return NextResponse.json({ ok: true, message: "Use POST to clear chores" });
+}
+
 export async function POST(_req: NextRequest) {
   try {
     const { userId } = await auth();
@@ -49,3 +53,5 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+
