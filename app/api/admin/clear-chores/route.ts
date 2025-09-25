@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/db/prisma";
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 export function GET() {
   return NextResponse.json({ ok: true, message: "Use POST to clear chores" });
@@ -53,5 +54,3 @@ export async function POST(_req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
-
-

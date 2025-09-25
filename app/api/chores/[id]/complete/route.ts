@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db/prisma";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
 
 export function GET() {
   return NextResponse.json({ ok: true, message: "Use POST to complete a chore" });
@@ -91,4 +92,3 @@ export async function POST(
     );
   }
 }
-
